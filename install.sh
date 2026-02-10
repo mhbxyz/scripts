@@ -135,6 +135,48 @@ detect_platform() {
   printf '%s %s' "$_os" "$_arch"
 }
 
+# ── Metadata helpers ──
+
+compute_sha256() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | cut -d' ' -f1
+  else
+    shasum -a 256 "$1" | cut -d' ' -f1
+  fi
+}
+
+read_meta_version() {
+  _meta="$INSTALL_DIR/.scripts-meta"
+  [ -f "$_meta" ] || return 0
+  grep "^$1|" "$_meta" | cut -d'|' -f2
+}
+
+read_meta_checksum() {
+  _meta="$INSTALL_DIR/.scripts-meta"
+  [ -f "$_meta" ] || return 0
+  grep "^$1|" "$_meta" | cut -d'|' -f3
+}
+
+write_meta() {
+  _meta="$INSTALL_DIR/.scripts-meta"
+  if [ -f "$_meta" ]; then
+    grep -v "^$1|" "$_meta" > "$_meta.tmp" || true
+    mv "$_meta.tmp" "$_meta"
+  fi
+  printf '%s|%s|%s\n' "$1" "$2" "$3" >> "$_meta"
+}
+
+remove_meta() {
+  _meta="$INSTALL_DIR/.scripts-meta"
+  [ -f "$_meta" ] || return 0
+  grep -v "^$1|" "$_meta" > "$_meta.tmp" || true
+  mv "$_meta.tmp" "$_meta"
+}
+
+extract_shell_version() {
+  grep '^VERSION=' "$1" 2>/dev/null | head -1 | cut -d'"' -f2
+}
+
 check_binary_deps() {
   _name="$1"
   case "$_name" in
@@ -232,7 +274,78 @@ install_script() {
   fi
   mv "$_tmpfile" "$INSTALL_DIR/$_name"
   chmod +x "$INSTALL_DIR/$_name"
-  success "Installed: $_name"
+
+  _sha256=$(compute_sha256 "$INSTALL_DIR/$_name")
+  case "$_type" in
+    shell)  _ver=$(extract_shell_version "$INSTALL_DIR/$_name") ;;
+    binary) _ver=$("$INSTALL_DIR/$_name" --version 2>/dev/null | awk '{print $NF}') ;;
+  esac
+  write_meta "$_name" "${_ver:-unknown}" "$_sha256"
+
+  success "Installed: $_name (${_ver:-unknown})"
+}
+
+update_script() {
+  _name="$1" _filename="$2" _type="${3:-shell}"
+  _old_sha=$(read_meta_checksum "$_name")
+  _old_ver=$(read_meta_version "$_name")
+
+  case "$_type" in
+    shell)
+      _tmpfile=$(mktemp)
+      register_tmp "$_tmpfile"
+      _url="$SCRIPTS_BASE_URL/shell/$_filename"
+      if ! download_file "$_url" "$_tmpfile"; then
+        die "Failed to download '$_name' from $_url"
+      fi
+      _new_sha=$(compute_sha256 "$_tmpfile")
+      if [ -n "$_old_sha" ] && [ "$_new_sha" = "$_old_sha" ]; then
+        info "$_name: up to date ($_old_ver)"
+        rm -f "$_tmpfile"
+        return 1
+      fi
+      _new_ver=$(extract_shell_version "$_tmpfile")
+      mv "$_tmpfile" "$INSTALL_DIR/$_name"
+      chmod +x "$INSTALL_DIR/$_name"
+      write_meta "$_name" "${_new_ver:-unknown}" "$_new_sha"
+      ;;
+    binary)
+      _release_tag=$(get_release_tag_for "$_name")
+      _platform=$(detect_platform)
+      _pos=$(printf '%s' "$_platform" | cut -d' ' -f1)
+      _parch=$(printf '%s' "$_platform" | cut -d' ' -f2)
+      _base="$_filename-$_pos-$_parch"
+      _sha_url="$RELEASES_BASE_URL/$_release_tag/$_base.sha256"
+      _tmpsha=$(mktemp)
+      register_tmp "$_tmpsha"
+      if download_file "$_sha_url" "$_tmpsha" 2>/dev/null; then
+        _new_sha=$(cat "$_tmpsha")
+        if [ -n "$_old_sha" ] && [ "$_new_sha" = "$_old_sha" ]; then
+          info "$_name: up to date ($_old_ver)"
+          return 1
+        fi
+      fi
+      _tmpfile=$(mktemp)
+      register_tmp "$_tmpfile"
+      _url="$RELEASES_BASE_URL/$_release_tag/$_base"
+      check_binary_deps "$_name"
+      if ! download_file "$_url" "$_tmpfile"; then
+        die "Failed to download '$_name' from $_url"
+      fi
+      _new_sha=$(compute_sha256 "$_tmpfile")
+      mv "$_tmpfile" "$INSTALL_DIR/$_name"
+      chmod +x "$INSTALL_DIR/$_name"
+      _new_ver=$("$INSTALL_DIR/$_name" --version 2>/dev/null | awk '{print $NF}')
+      write_meta "$_name" "${_new_ver:-unknown}" "$_new_sha"
+      ;;
+  esac
+
+  if [ -n "$_old_ver" ] && [ "$_old_ver" != "unknown" ]; then
+    success "Updated: $_name ($_old_ver → ${_new_ver:-unknown})"
+  else
+    success "Updated: $_name"
+  fi
+  return 0
 }
 
 check_path() {
@@ -401,6 +514,7 @@ cmd_uninstall() {
   for _name in $_scripts; do
     if [ -f "$INSTALL_DIR/$_name" ]; then
       rm -f "$INSTALL_DIR/$_name"
+      remove_meta "$_name"
       success "Removed: $_name"
       _count=$((_count + 1))
     fi
@@ -435,15 +549,24 @@ cmd_update() {
   fi
 
   _count=0
+  _skipped=0
   for _name in $_installed; do
     _filename=$(get_filename_for "$_name")
     _type=$(get_type_for "$_name")
-    install_script "$_name" "$_filename" "$_type"
-    _count=$((_count + 1))
+    if update_script "$_name" "$_filename" "$_type"; then
+      _count=$((_count + 1))
+    else
+      _skipped=$((_skipped + 1))
+    fi
   done
 
   printf "\n"
-  success "Updated $_count script(s) in $INSTALL_DIR"
+  if [ "$_count" -gt 0 ]; then
+    success "Updated $_count script(s) in $INSTALL_DIR"
+  fi
+  if [ "$_skipped" -gt 0 ]; then
+    info "$_skipped script(s) already up to date"
+  fi
 }
 
 # ── Main dispatch ──

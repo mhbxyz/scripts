@@ -5,6 +5,8 @@
 
 set -eu
 
+VERSION="1.0.0"
+
 # ── Constants ──
 
 RESET="\033[0m"
@@ -690,6 +692,7 @@ case "$cmd" in
   status)           cmd_status "$@" ;;
   unschedule)       cmd_unschedule "$@" ;;
   help|-h|--help)   show_help ;;
+  --version)        printf '%s\n' "$VERSION"; exit 0 ;;
   *)
     printf "Unknown command: %s\n\n" "$cmd"
     show_help

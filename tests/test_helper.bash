@@ -116,17 +116,19 @@ teardown_backup_env() {
 setup_install_env() {
   FAKE_REPO="$(mktemp -d)"
   mkdir -p "$FAKE_REPO/shell"
-  # Create dummy shell scripts in the fake repo
+  # Create dummy shell scripts in the fake repo (with VERSION)
   for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh; do
-    printf '#!/bin/sh\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
+    printf '#!/bin/sh\nVERSION="1.0.0"\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
   done
-  # Create dummy binaries in the fake repo (release structure)
+  # Create dummy binaries in the fake repo (release structure) with .sha256 sidecars
   for tag in imgstotxt-latest pdftoimgs-latest; do
     name="${tag%-latest}"
     mkdir -p "$FAKE_REPO/$tag"
-    printf '#!/bin/sh\necho "%s"\n' "$name" > "$FAKE_REPO/$tag/$name-linux-x86_64"
-    printf '#!/bin/sh\necho "%s"\n' "$name" > "$FAKE_REPO/$tag/$name-darwin-x86_64"
-    printf '#!/bin/sh\necho "%s"\n' "$name" > "$FAKE_REPO/$tag/$name-darwin-arm64"
+    for platform in linux-x86_64 darwin-x86_64 darwin-arm64; do
+      _binpath="$FAKE_REPO/$tag/$name-$platform"
+      printf '#!/bin/sh\necho "%s 1.0.0"\n' "$name" > "$_binpath"
+      sha256sum "$_binpath" | cut -d' ' -f1 > "$_binpath.sha256"
+    done
   done
   export SCRIPTS_REPO_URL="file://$FAKE_REPO"
   export RELEASES_BASE_URL="file://$FAKE_REPO"

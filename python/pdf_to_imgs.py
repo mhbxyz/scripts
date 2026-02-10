@@ -4,6 +4,8 @@ from datetime import datetime
 
 import fitz  # pymupdf
 
+__version__ = "1.0.0"
+
 
 def log(message):
     time = datetime.now().strftime("%H:%M:%S")
@@ -50,6 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("pdf_path", help="Path to the PDF file to convert.")
     parser.add_argument("--dpi", type=int, default=300, help="Image resolution (default: 300).")
     parser.add_argument("--fmt", default="png", choices=["png", "jpeg", "jpg", "tiff"], help="Image output format.")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
 
     args = parser.parse_args()
     pdf_to_images(args.pdf_path, dpi=args.dpi, fmt=args.fmt)

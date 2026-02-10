@@ -51,10 +51,15 @@ jobs:
       - name: Rename artifact
         run: mv "dist/${{ needs.prepare.outputs.name }}" "dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}"
 
+      - name: Generate checksum
+        run: sha256sum "dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}" | cut -d' ' -f1 > "dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}.sha256"
+
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}
-          path: dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}
+            dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}.sha256
 
   release:
     needs: [prepare, build]

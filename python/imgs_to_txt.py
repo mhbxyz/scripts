@@ -4,6 +4,8 @@ from datetime import datetime
 from PIL import Image
 import pytesseract
 
+__version__ = "1.0.0"
+
 def log(msg):
     print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
 
@@ -51,6 +53,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("input_dir", help="Path to the folder containing images")
     parser.add_argument("--lang", default="eng", help="Tesseract OCR language (e.g., eng, fra, deu...)")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
 
     args = parser.parse_args()
     run_ocr_to_txt(args.input_dir, args.lang)

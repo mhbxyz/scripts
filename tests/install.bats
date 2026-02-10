@@ -81,8 +81,8 @@ teardown() {
 @test "install --only installs specific scripts" {
   run "$INSTALL_SH" install --only "gpgkeys sshkeys"
   assert_success
-  assert_output --partial "Installed: gpgkeys"
-  assert_output --partial "Installed: sshkeys"
+  assert_output --partial "Installed: gpgkeys (1.0.0)"
+  assert_output --partial "Installed: sshkeys (1.0.0)"
   assert [ -f "$INSTALL_DIR/gpgkeys" ]
   assert [ -f "$INSTALL_DIR/sshkeys" ]
   assert [ ! -f "$INSTALL_DIR/homebackup" ]
@@ -91,7 +91,7 @@ teardown() {
 @test "install --only single script" {
   run "$INSTALL_SH" install --only "homebackup"
   assert_success
-  assert_output --partial "Installed: homebackup"
+  assert_output --partial "Installed: homebackup (1.0.0)"
   assert_output --partial "Installed 1 script(s)"
   assert [ -f "$INSTALL_DIR/homebackup" ]
 }
@@ -187,25 +187,27 @@ teardown() {
 
 # ── Update ──
 
-@test "update re-downloads installed scripts" {
+@test "update re-downloads changed scripts" {
   "$INSTALL_SH" install --only "gpgkeys sshkeys"
-  # Modify the installed scripts to verify they get overwritten
+  # Modify the installed script to change its checksum
   printf "old content\n" > "$INSTALL_DIR/gpgkeys"
+  # Clear meta for gpgkeys so it doesn't match
+  sed -i '/^gpgkeys|/d' "$INSTALL_DIR/.scripts-meta"
   run "$INSTALL_SH" update
   assert_success
-  assert_output --partial "Updated 2 script(s)"
-  assert_output --partial "Installed: gpgkeys"
-  assert_output --partial "Installed: sshkeys"
+  assert_output --partial "Updated: gpgkeys"
+  # sshkeys should be up to date (unchanged)
+  assert_output --partial "sshkeys: up to date"
   # Verify content was re-downloaded (not "old content")
   run cat "$INSTALL_DIR/gpgkeys"
   refute_output --partial "old content"
 }
 
-@test "update only updates installed scripts" {
+@test "update only checks installed scripts" {
   "$INSTALL_SH" install --only "gpgkeys"
   run "$INSTALL_SH" update
   assert_success
-  assert_output --partial "Updated 1 script(s)"
+  assert_output --partial "1 script(s) already up to date"
   assert [ ! -f "$INSTALL_DIR/sshkeys" ]
 }
 
@@ -220,7 +222,7 @@ teardown() {
   "$INSTALL_SH" install --only "gpgkeys" --dir "$custom_dir"
   run "$INSTALL_SH" update --dir "$custom_dir"
   assert_success
-  assert_output --partial "Updated 1 script(s)"
+  assert_output --partial "1 script(s) already up to date"
   rm -rf "$custom_dir"
 }
 
@@ -244,7 +246,7 @@ teardown() {
 @test "--only without subcommand defaults to install" {
   run "$INSTALL_SH" --only "gpgkeys"
   assert_success
-  assert_output --partial "Installed: gpgkeys"
+  assert_output --partial "Installed: gpgkeys (1.0.0)"
 }
 
 # ── Binary scripts ──
@@ -252,7 +254,7 @@ teardown() {
 @test "install --only binary script installs binary" {
   run "$INSTALL_SH" install --only "imgstotxt"
   assert_success
-  assert_output --partial "Installed: imgstotxt"
+  assert_output --partial "Installed: imgstotxt (1.0.0)"
   assert [ -f "$INSTALL_DIR/imgstotxt" ]
   assert [ -x "$INSTALL_DIR/imgstotxt" ]
 }
@@ -262,4 +264,65 @@ teardown() {
   run "$INSTALL_SH" install --only "pdftoimgs"
   assert_failure
   assert_output --partial "Failed to download"
+}
+
+# ── Metadata ──
+
+@test "install stores metadata in .scripts-meta" {
+  run "$INSTALL_SH" install --only "gpgkeys"
+  assert_success
+  assert [ -f "$INSTALL_DIR/.scripts-meta" ]
+  run grep "^gpgkeys|" "$INSTALL_DIR/.scripts-meta"
+  assert_success
+  assert_output --partial "gpgkeys|1.0.0|"
+}
+
+@test "install --all stores metadata for all scripts" {
+  run "$INSTALL_SH" install --all
+  assert_success
+  for name in gpgkeys sshkeys homebackup sortdownloads imgstotxt pdftoimgs; do
+    run grep "^${name}|" "$INSTALL_DIR/.scripts-meta"
+    assert_success
+  done
+}
+
+@test "uninstall cleans metadata" {
+  "$INSTALL_SH" install --only "gpgkeys sshkeys"
+  run grep "^gpgkeys|" "$INSTALL_DIR/.scripts-meta"
+  assert_success
+  "$INSTALL_SH" uninstall --only "gpgkeys"
+  run grep "^gpgkeys|" "$INSTALL_DIR/.scripts-meta"
+  assert_failure
+  # sshkeys metadata should remain
+  run grep "^sshkeys|" "$INSTALL_DIR/.scripts-meta"
+  assert_success
+}
+
+# ── Smart update ──
+
+@test "update skips up-to-date scripts" {
+  "$INSTALL_SH" install --only "gpgkeys sshkeys"
+  run "$INSTALL_SH" update
+  assert_success
+  assert_output --partial "gpgkeys: up to date (1.0.0)"
+  assert_output --partial "sshkeys: up to date (1.0.0)"
+  assert_output --partial "2 script(s) already up to date"
+}
+
+@test "update detects changed script" {
+  "$INSTALL_SH" install --only "gpgkeys"
+  # Change the script in the fake repo
+  printf '#!/bin/sh\nVERSION="1.1.0"\necho "updated gpgkeys"\n' > "$FAKE_REPO/shell/gpgkeys.sh"
+  run "$INSTALL_SH" update
+  assert_success
+  assert_output --partial "Updated: gpgkeys"
+}
+
+@test "update shows version transition" {
+  "$INSTALL_SH" install --only "gpgkeys"
+  # Change version in the fake repo
+  printf '#!/bin/sh\nVERSION="1.1.0"\necho "gpgkeys.sh"\n' > "$FAKE_REPO/shell/gpgkeys.sh"
+  run "$INSTALL_SH" update
+  assert_success
+  assert_output --partial "1.0.0 → 1.1.0"
 }
