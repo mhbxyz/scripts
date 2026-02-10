@@ -117,8 +117,7 @@ setup_install_env() {
   FAKE_REPO="$(mktemp -d)"
   mkdir -p "$FAKE_REPO/shell"
   # Create dummy scripts in the fake repo
-  for script in gpgkeys.sh sshkeys.sh homebackup.sh fix-pacman-gpg.sh \
-                enable-emoji-support-for-arch.sh uninstall-jetbrains-toolbox.sh; do
+  for script in gpgkeys.sh sshkeys.sh homebackup.sh; do
     printf '#!/bin/sh\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
   done
   export SCRIPTS_REPO_URL="file://$FAKE_REPO"

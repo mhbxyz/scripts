@@ -18,10 +18,7 @@ INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
 MANIFEST="gpgkeys|gpgkeys.sh|Generate and manage GPG keys
 sshkeys|sshkeys.sh|Generate and manage SSH keys
-homebackup|homebackup.sh|Backup home directory to external drive
-fix-pacman-gpg|fix-pacman-gpg.sh|Fix pacman GPG errors on Arch/Manjaro
-enable-emoji-support-for-arch|enable-emoji-support-for-arch.sh|Enable emoji support on Arch
-uninstall-jetbrains-toolbox|uninstall-jetbrains-toolbox.sh|Uninstall JetBrains Toolbox"
+homebackup|homebackup.sh|Backup home directory to external drive"
 
 # ── Temp file cleanup ──
 
@@ -230,9 +227,6 @@ Available scripts:
   gpgkeys                        Generate and manage GPG keys
   sshkeys                        Generate and manage SSH keys
   homebackup                     Backup home directory to external drive
-  fix-pacman-gpg                 Fix pacman GPG errors on Arch/Manjaro
-  enable-emoji-support-for-arch  Enable emoji support on Arch
-  uninstall-jetbrains-toolbox    Uninstall JetBrains Toolbox
 
 Examples:
   curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh

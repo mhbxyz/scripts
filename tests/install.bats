@@ -69,12 +69,11 @@ teardown() {
 
 # ── Install e2e ──
 
-@test "install --all installs all 6 scripts" {
+@test "install --all installs all 3 scripts" {
   run "$INSTALL_SH" install --all
   assert_success
-  assert_output --partial "Installed 6 script(s)"
-  for name in gpgkeys sshkeys homebackup fix-pacman-gpg \
-              enable-emoji-support-for-arch uninstall-jetbrains-toolbox; do
+  assert_output --partial "Installed 3 script(s)"
+  for name in gpgkeys sshkeys homebackup; do
     assert [ -f "$INSTALL_DIR/$name" ]
   done
 }
@@ -100,8 +99,7 @@ teardown() {
 @test "installed scripts are executable" {
   run "$INSTALL_SH" install --all
   assert_success
-  for name in gpgkeys sshkeys homebackup fix-pacman-gpg \
-              enable-emoji-support-for-arch uninstall-jetbrains-toolbox; do
+  for name in gpgkeys sshkeys homebackup; do
     assert [ -x "$INSTALL_DIR/$name" ]
   done
 }
@@ -154,7 +152,7 @@ teardown() {
   "$INSTALL_SH" install --all
   run "$INSTALL_SH" uninstall --all
   assert_success
-  assert_output --partial "Removed 6 script(s)"
+  assert_output --partial "Removed 3 script(s)"
   for name in gpgkeys sshkeys homebackup; do
     assert [ ! -f "$INSTALL_DIR/$name" ]
   done
@@ -240,7 +238,7 @@ teardown() {
 @test "no subcommand defaults to install" {
   run "$INSTALL_SH" --all
   assert_success
-  assert_output --partial "Installed 6 script(s)"
+  assert_output --partial "Installed 3 script(s)"
 }
 
 @test "--only without subcommand defaults to install" {

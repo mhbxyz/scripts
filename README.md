@@ -26,9 +26,6 @@ sh -s -- uninstall                # Uninstall all scripts
 | `gpgkeys` | Generate and manage GPG keys |
 | `sshkeys` | Generate and manage SSH keys |
 | `homebackup` | Backup home directory to external drive |
-| `fix-pacman-gpg` | Fix pacman GPG errors on Arch/Manjaro |
-| `enable-emoji-support-for-arch` | Enable emoji support on Arch |
-| `uninstall-jetbrains-toolbox` | Uninstall JetBrains Toolbox |
 
 ## Python Scripts
 
@@ -41,7 +38,7 @@ sh -s -- uninstall                # Uninstall all scripts
 
 ## Testing
 
-Tests use [BATS](https://github.com/bats-core/bats-core). Install with `sudo pacman -S bats bats-assert bats-support bats-file`, then:
+Tests use [BATS](https://github.com/bats-core/bats-core). Install `bats bats-assert bats-support bats-file`, then:
 
 ```sh
 bats tests/
