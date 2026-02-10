@@ -117,7 +117,7 @@ setup_install_env() {
   FAKE_REPO="$(mktemp -d)"
   mkdir -p "$FAKE_REPO/shell"
   # Create dummy shell scripts in the fake repo (with VERSION)
-  for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh; do
+  for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh mygit.sh; do
     printf '#!/bin/sh\nVERSION="1.0.0"\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
   done
   # Create dummy binaries in the fake repo (release structure) with .sha256 sidecars
@@ -188,6 +188,24 @@ teardown_sortdownloads_env() {
   export LC_ALL="$LC_ALL_ORIG"
   export LANG="$LANG_ORIG"
   unset HOME_ORIG DOWNLOADS SORTDOWNLOADS_MOCK_DIR LC_ALL_ORIG LANG_ORIG
+}
+
+# ── Mygit environment isolation ──
+
+setup_mygit_env() {
+  export GIT_CONFIG_GLOBAL="$(mktemp)"
+  export HOME_ORIG="$HOME"
+  export HOME="$(mktemp -d)"
+  # Init a git repo so --local scope works
+  git init "$HOME/repo" >/dev/null 2>&1
+  export MYGIT_TEST_REPO="$HOME/repo"
+}
+
+teardown_mygit_env() {
+  rm -f "$GIT_CONFIG_GLOBAL"
+  rm -rf "$HOME"
+  export HOME="$HOME_ORIG"
+  unset GIT_CONFIG_GLOBAL HOME_ORIG MYGIT_TEST_REPO
 }
 
 # ── Mock PATH ──

@@ -21,6 +21,7 @@ MANIFEST="gpgkeys|gpgkeys.sh|Generate and manage GPG keys|shell
 sshkeys|sshkeys.sh|Generate and manage SSH keys|shell
 homebackup|homebackup.sh|Backup home directory to external drive|shell
 sortdownloads|sortdownloads.sh|Sort Downloads folder into organized subdirectories|shell
+mygit|mygit.sh|Simplified git config management|shell
 imgstotxt|imgstotxt|OCR images to text file|binary|imgstotxt-latest
 pdftoimgs|pdftoimgs|Convert PDF to images|binary|pdftoimgs-latest"
 
@@ -416,6 +417,7 @@ Available scripts:
   sshkeys                        Generate and manage SSH keys
   homebackup                     Backup home directory to external drive
   sortdownloads                  Sort Downloads folder into organized subdirectories
+  mygit                          Simplified git config management
   imgstotxt                      OCR images to text file
   pdftoimgs                      Convert PDF to images
 
