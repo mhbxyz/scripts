@@ -20,3 +20,27 @@ The **Useful Scripts** project is a collection of scripts designed to assist wit
 - **ssh-conf.sh**: Manage your SSH config file easily with options to add, remove, list, show, edit, and back up SSH host entries.
 - **ssh-keybuild.sh**: Generate SSH keys with options to specify email, key type, and name. Supports adding keys to SSH agent, copying public keys to clipboard, and updating SSH config.
 - **uninstall-jetbrains-toolbox.sh**: Uninstall JetBrains Toolbox from Linux systems, with optional removal of installed IDEs, configurations, and caches.
+
+
+## Testing
+
+Tests use [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System).
+
+### Install dependencies (Arch)
+
+```sh
+sudo pacman -S bats bats-assert bats-support bats-file
+```
+
+### Run tests
+
+```sh
+# Run all tests
+bats tests/
+
+# Run a specific test file
+bats tests/gpgkeys.bats
+
+# Verbose output
+bats --verbose-run tests/gpgkeys.bats
+```

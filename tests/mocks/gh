@@ -1,0 +1,29 @@
+#!/bin/sh
+# Mock gh CLI for BATS tests
+
+case "$1" in
+  auth)
+    case "$2" in
+      status) exit 0 ;;
+    esac
+    ;;
+  gpg-key)
+    case "$2" in
+      add)
+        printf "GPG key added (mock)\n"
+        exit 0
+        ;;
+      list)
+        printf "ID: ABC123  Key ID: DEADBEEF1234  Added: 2025-01-01\n"
+        exit 0
+        ;;
+      delete)
+        printf "GPG key deleted (mock)\n"
+        exit 0
+        ;;
+    esac
+    ;;
+esac
+
+printf "gh mock: unhandled args: %s\n" "$*" >&2
+exit 1
