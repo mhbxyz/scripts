@@ -1,0 +1,39 @@
+#!/bin/sh
+# Mock systemctl for BATS tests
+
+# Track calls for assertion
+MOCK_DIR="${SORTDOWNLOADS_MOCK_DIR:-/tmp/sortdownloads-mock}"
+mkdir -p "$MOCK_DIR"
+
+case "$1" in
+  --user)
+    shift
+    case "$1" in
+      status)
+        exit 0
+        ;;
+      daemon-reload)
+        printf "daemon-reload\n" >> "$MOCK_DIR/calls"
+        exit 0
+        ;;
+      enable)
+        printf "enable %s\n" "$*" >> "$MOCK_DIR/calls"
+        exit 0
+        ;;
+      disable)
+        printf "disable %s\n" "$*" >> "$MOCK_DIR/calls"
+        exit 0
+        ;;
+      is-enabled)
+        if [ -f "$MOCK_DIR/timer-enabled" ]; then
+          exit 0
+        else
+          exit 1
+        fi
+        ;;
+    esac
+    ;;
+esac
+
+printf "systemctl mock: unhandled args: %s\n" "$*" >&2
+exit 1

@@ -33,6 +33,7 @@ sh -s -- uninstall                # Uninstall all scripts
 | `gpgkeys` | Generate and manage GPG keys |
 | `sshkeys` | Generate and manage SSH keys |
 | `homebackup` | Backup home directory to external drive |
+| `sortdownloads` | Sort Downloads folder into organized subdirectories |
 
 ## Python Scripts
 

@@ -117,7 +117,7 @@ setup_install_env() {
   FAKE_REPO="$(mktemp -d)"
   mkdir -p "$FAKE_REPO/shell"
   # Create dummy scripts in the fake repo
-  for script in gpgkeys.sh sshkeys.sh homebackup.sh; do
+  for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh; do
     printf '#!/bin/sh\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
   done
   export SCRIPTS_REPO_URL="file://$FAKE_REPO"
@@ -128,6 +128,55 @@ setup_install_env() {
 teardown_install_env() {
   rm -rf "$FAKE_REPO" "$INSTALL_DIR"
   unset SCRIPTS_REPO_URL INSTALL_DIR FAKE_REPO
+}
+
+# ── Sortdownloads environment isolation ──
+
+setup_sortdownloads_env() {
+  export HOME_ORIG="$HOME"
+  export HOME="$(mktemp -d)"
+
+  # Force English locale for deterministic category names
+  export LC_ALL_ORIG="${LC_ALL:-}"
+  export LANG_ORIG="${LANG:-}"
+  export LC_ALL="en_US.UTF-8"
+  export LANG="en_US.UTF-8"
+
+  DOWNLOADS="$HOME/Downloads"
+  mkdir -p "$DOWNLOADS"
+
+  # Test files for each category
+  printf "pdf" > "$DOWNLOADS/report.pdf"
+  printf "jpg" > "$DOWNLOADS/photo.jpg"
+  printf "mp4" > "$DOWNLOADS/video.mp4"
+  printf "mp3" > "$DOWNLOADS/song.mp3"
+  printf "zip" > "$DOWNLOADS/archive.zip"
+  printf "deb" > "$DOWNLOADS/installer.deb"
+  printf "sh"  > "$DOWNLOADS/script.sh"
+  printf "ttf" > "$DOWNLOADS/font.ttf"
+  printf "iso" > "$DOWNLOADS/image.iso"
+  printf "json" > "$DOWNLOADS/data.json"
+  printf "noext" > "$DOWNLOADS/noextension"
+
+  # Edge cases
+  printf "hidden" > "$DOWNLOADS/.hidden_file"
+  printf "part"   > "$DOWNLOADS/downloading.part"
+  printf "crdl"   > "$DOWNLOADS/inprogress.crdownload"
+  ln -s "$DOWNLOADS/report.pdf" "$DOWNLOADS/symlink.pdf"
+  mkdir -p "$DOWNLOADS/subdirectory"
+
+  # Mock systemd dir
+  SORTDOWNLOADS_MOCK_DIR="$(mktemp -d)"
+  export SORTDOWNLOADS_MOCK_DIR DOWNLOADS
+}
+
+teardown_sortdownloads_env() {
+  rm -rf "$HOME"
+  rm -rf "$SORTDOWNLOADS_MOCK_DIR"
+  export HOME="$HOME_ORIG"
+  export LC_ALL="$LC_ALL_ORIG"
+  export LANG="$LANG_ORIG"
+  unset HOME_ORIG DOWNLOADS SORTDOWNLOADS_MOCK_DIR LC_ALL_ORIG LANG_ORIG
 }
 
 # ── Mock PATH ──

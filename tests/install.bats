@@ -69,11 +69,11 @@ teardown() {
 
 # ── Install e2e ──
 
-@test "install --all installs all 3 scripts" {
+@test "install --all installs all 4 scripts" {
   run "$INSTALL_SH" install --all
   assert_success
-  assert_output --partial "Installed 3 script(s)"
-  for name in gpgkeys sshkeys homebackup; do
+  assert_output --partial "Installed 4 script(s)"
+  for name in gpgkeys sshkeys homebackup sortdownloads; do
     assert [ -f "$INSTALL_DIR/$name" ]
   done
 }
@@ -152,8 +152,8 @@ teardown() {
   "$INSTALL_SH" install --all
   run "$INSTALL_SH" uninstall --all
   assert_success
-  assert_output --partial "Removed 3 script(s)"
-  for name in gpgkeys sshkeys homebackup; do
+  assert_output --partial "Removed 4 script(s)"
+  for name in gpgkeys sshkeys homebackup sortdownloads; do
     assert [ ! -f "$INSTALL_DIR/$name" ]
   done
 }
@@ -238,7 +238,7 @@ teardown() {
 @test "no subcommand defaults to install" {
   run "$INSTALL_SH" --all
   assert_success
-  assert_output --partial "Installed 3 script(s)"
+  assert_output --partial "Installed 4 script(s)"
 }
 
 @test "--only without subcommand defaults to install" {

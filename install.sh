@@ -18,7 +18,8 @@ INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
 MANIFEST="gpgkeys|gpgkeys.sh|Generate and manage GPG keys
 sshkeys|sshkeys.sh|Generate and manage SSH keys
-homebackup|homebackup.sh|Backup home directory to external drive"
+homebackup|homebackup.sh|Backup home directory to external drive
+sortdownloads|sortdownloads.sh|Sort Downloads folder into organized subdirectories"
 
 # ── Temp file cleanup ──
 
@@ -227,6 +228,7 @@ Available scripts:
   gpgkeys                        Generate and manage GPG keys
   sshkeys                        Generate and manage SSH keys
   homebackup                     Backup home directory to external drive
+  sortdownloads                  Sort Downloads folder into organized subdirectories
 
 Examples:
   curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh
