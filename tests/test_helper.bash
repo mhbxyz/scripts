@@ -116,18 +116,27 @@ teardown_backup_env() {
 setup_install_env() {
   FAKE_REPO="$(mktemp -d)"
   mkdir -p "$FAKE_REPO/shell"
-  # Create dummy scripts in the fake repo
+  # Create dummy shell scripts in the fake repo
   for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh; do
     printf '#!/bin/sh\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
   done
+  # Create dummy binaries in the fake repo (release structure)
+  for tag in imgstotxt-latest pdftoimgs-latest; do
+    name="${tag%-latest}"
+    mkdir -p "$FAKE_REPO/$tag"
+    printf '#!/bin/sh\necho "%s"\n' "$name" > "$FAKE_REPO/$tag/$name-linux-x86_64"
+    printf '#!/bin/sh\necho "%s"\n' "$name" > "$FAKE_REPO/$tag/$name-darwin-x86_64"
+    printf '#!/bin/sh\necho "%s"\n' "$name" > "$FAKE_REPO/$tag/$name-darwin-arm64"
+  done
   export SCRIPTS_REPO_URL="file://$FAKE_REPO"
+  export RELEASES_BASE_URL="file://$FAKE_REPO"
   export INSTALL_DIR="$(mktemp -d)"
   export FAKE_REPO
 }
 
 teardown_install_env() {
   rm -rf "$FAKE_REPO" "$INSTALL_DIR"
-  unset SCRIPTS_REPO_URL INSTALL_DIR FAKE_REPO
+  unset SCRIPTS_REPO_URL RELEASES_BASE_URL INSTALL_DIR FAKE_REPO
 }
 
 # ── Sortdownloads environment isolation ──

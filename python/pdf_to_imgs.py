@@ -1,12 +1,14 @@
-import os
 import argparse
 from pathlib import Path
-from pdf2image import convert_from_path
 from datetime import datetime
+
+import fitz  # pymupdf
+
 
 def log(message):
     time = datetime.now().strftime("%H:%M:%S")
     print(f"[{time}] {message}")
+
 
 def pdf_to_images(pdf_path, dpi=300, fmt="png"):
     pdf_path = Path(pdf_path).resolve()
@@ -24,22 +26,24 @@ def pdf_to_images(pdf_path, dpi=300, fmt="png"):
 
     try:
         log("🚀 Starting conversion of PDF to images...")
-        images = convert_from_path(str(pdf_path), dpi=dpi)
+        doc = fitz.open(str(pdf_path))
     except Exception as e:
         log(f"❌ Error during conversion: {e}")
         return
 
-    for i, img in enumerate(images):
+    for i, page in enumerate(doc):
         page_number = i + 1
         image_path = output_folder / f"page_{page_number:03d}.{fmt}"
         try:
             log(f"🖼️  Processing page {page_number}...")
-            img.save(image_path)
+            pix = page.get_pixmap(dpi=dpi)
+            pix.save(str(image_path))
             log(f"✅ Page {page_number} saved as: {image_path.name}")
         except Exception as e:
             log(f"⚠️  Error saving page {page_number}: {e}")
 
-    log(f"\n🎉 Done: {len(images)} pages converted successfully into '{output_folder}'.")
+    log(f"\n🎉 Done: {len(doc)} pages converted successfully into '{output_folder}'.")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert a PDF into images.")

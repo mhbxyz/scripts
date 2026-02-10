@@ -1,0 +1,15 @@
+[project]
+name = "scripts"
+version = "0.1.0"
+description = "Shell and Python utilities for system automation"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "pillow",
+    "pytesseract",
+    "pymupdf",
+]
+
+[dependency-groups]
+dev = ["ruff"]
+build = ["pyinstaller"]

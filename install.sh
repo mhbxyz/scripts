@@ -14,12 +14,15 @@ YELLOW="\033[0;33m"
 BLUE="\033[0;34m"
 
 SCRIPTS_BASE_URL="${SCRIPTS_REPO_URL:-https://raw.githubusercontent.com/mhbxyz/scripts/main}"
+RELEASES_BASE_URL="${RELEASES_BASE_URL:-https://github.com/mhbxyz/scripts/releases/download}"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
-MANIFEST="gpgkeys|gpgkeys.sh|Generate and manage GPG keys
-sshkeys|sshkeys.sh|Generate and manage SSH keys
-homebackup|homebackup.sh|Backup home directory to external drive
-sortdownloads|sortdownloads.sh|Sort Downloads folder into organized subdirectories"
+MANIFEST="gpgkeys|gpgkeys.sh|Generate and manage GPG keys|shell
+sshkeys|sshkeys.sh|Generate and manage SSH keys|shell
+homebackup|homebackup.sh|Backup home directory to external drive|shell
+sortdownloads|sortdownloads.sh|Sort Downloads folder into organized subdirectories|shell
+imgstotxt|imgstotxt|OCR images to text file|binary|imgstotxt-latest
+pdftoimgs|pdftoimgs|Convert PDF to images|binary|pdftoimgs-latest"
 
 # ── Temp file cleanup ──
 
@@ -89,6 +92,60 @@ manifest_desc() {
   printf '%s' "$1" | cut -d'|' -f3
 }
 
+manifest_type() {
+  _type=$(printf '%s' "$1" | cut -d'|' -f4)
+  printf '%s' "${_type:-shell}"
+}
+
+manifest_release_tag() {
+  printf '%s' "$1" | cut -d'|' -f5
+}
+
+get_type_for() {
+  _gname="$1"
+  _i=1
+  _total=$(manifest_count)
+  while [ "$_i" -le "$_total" ]; do
+    _entry=$(manifest_entry "$_i")
+    if [ "$(manifest_name "$_entry")" = "$_gname" ]; then
+      manifest_type "$_entry"
+      return
+    fi
+    _i=$((_i + 1))
+  done
+}
+
+get_release_tag_for() {
+  _gname="$1"
+  _i=1
+  _total=$(manifest_count)
+  while [ "$_i" -le "$_total" ]; do
+    _entry=$(manifest_entry "$_i")
+    if [ "$(manifest_name "$_entry")" = "$_gname" ]; then
+      manifest_release_tag "$_entry"
+      return
+    fi
+    _i=$((_i + 1))
+  done
+}
+
+detect_platform() {
+  _os=$(uname -s | tr '[:upper:]' '[:lower:]')
+  _arch=$(uname -m)
+  printf '%s %s' "$_os" "$_arch"
+}
+
+check_binary_deps() {
+  _name="$1"
+  case "$_name" in
+    imgstotxt)
+      if ! command -v tesseract >/dev/null 2>&1; then
+        warn "tesseract is not installed. imgstotxt requires tesseract-ocr to function."
+      fi
+      ;;
+  esac
+}
+
 validate_script_name() {
   _vname="$1"
   _found=0
@@ -149,10 +206,27 @@ get_all_names() {
 }
 
 install_script() {
-  _name="$1" _filename="$2"
-  _url="$SCRIPTS_BASE_URL/shell/$_filename"
+  _name="$1" _filename="$2" _type="${3:-shell}"
   _tmpfile=$(mktemp)
   register_tmp "$_tmpfile"
+
+  case "$_type" in
+    shell)
+      _url="$SCRIPTS_BASE_URL/shell/$_filename"
+      ;;
+    binary)
+      _release_tag=$(get_release_tag_for "$_name")
+      _platform=$(detect_platform)
+      _pos=$(printf '%s' "$_platform" | cut -d' ' -f1)
+      _parch=$(printf '%s' "$_platform" | cut -d' ' -f2)
+      _url="$RELEASES_BASE_URL/$_release_tag/$_filename-$_pos-$_parch"
+      check_binary_deps "$_name"
+      ;;
+    *)
+      die "Unknown type '$_type' for script '$_name'"
+      ;;
+  esac
+
   if ! download_file "$_url" "$_tmpfile"; then
     die "Failed to download '$_name' from $_url"
   fi
@@ -229,6 +303,8 @@ Available scripts:
   sshkeys                        Generate and manage SSH keys
   homebackup                     Backup home directory to external drive
   sortdownloads                  Sort Downloads folder into organized subdirectories
+  imgstotxt                      OCR images to text file
+  pdftoimgs                      Convert PDF to images
 
 Examples:
   curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh
@@ -280,7 +356,8 @@ cmd_install() {
   _count=0
   for _name in $_scripts; do
     _filename=$(get_filename_for "$_name")
-    install_script "$_name" "$_filename"
+    _type=$(get_type_for "$_name")
+    install_script "$_name" "$_filename" "$_type"
     _count=$((_count + 1))
   done
 
@@ -360,7 +437,8 @@ cmd_update() {
   _count=0
   for _name in $_installed; do
     _filename=$(get_filename_for "$_name")
-    install_script "$_name" "$_filename"
+    _type=$(get_type_for "$_name")
+    install_script "$_name" "$_filename" "$_type"
     _count=$((_count + 1))
   done
 

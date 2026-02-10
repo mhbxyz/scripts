@@ -69,11 +69,11 @@ teardown() {
 
 # ── Install e2e ──
 
-@test "install --all installs all 4 scripts" {
+@test "install --all installs all 6 scripts" {
   run "$INSTALL_SH" install --all
   assert_success
-  assert_output --partial "Installed 4 script(s)"
-  for name in gpgkeys sshkeys homebackup sortdownloads; do
+  assert_output --partial "Installed 6 script(s)"
+  for name in gpgkeys sshkeys homebackup sortdownloads imgstotxt pdftoimgs; do
     assert [ -f "$INSTALL_DIR/$name" ]
   done
 }
@@ -152,8 +152,8 @@ teardown() {
   "$INSTALL_SH" install --all
   run "$INSTALL_SH" uninstall --all
   assert_success
-  assert_output --partial "Removed 4 script(s)"
-  for name in gpgkeys sshkeys homebackup sortdownloads; do
+  assert_output --partial "Removed 6 script(s)"
+  for name in gpgkeys sshkeys homebackup sortdownloads imgstotxt pdftoimgs; do
     assert [ ! -f "$INSTALL_DIR/$name" ]
   done
 }
@@ -238,11 +238,28 @@ teardown() {
 @test "no subcommand defaults to install" {
   run "$INSTALL_SH" --all
   assert_success
-  assert_output --partial "Installed 4 script(s)"
+  assert_output --partial "Installed 6 script(s)"
 }
 
 @test "--only without subcommand defaults to install" {
   run "$INSTALL_SH" --only "gpgkeys"
   assert_success
   assert_output --partial "Installed: gpgkeys"
+}
+
+# ── Binary scripts ──
+
+@test "install --only binary script installs binary" {
+  run "$INSTALL_SH" install --only "imgstotxt"
+  assert_success
+  assert_output --partial "Installed: imgstotxt"
+  assert [ -f "$INSTALL_DIR/imgstotxt" ]
+  assert [ -x "$INSTALL_DIR/imgstotxt" ]
+}
+
+@test "install fails on invalid binary download URL" {
+  export RELEASES_BASE_URL="file:///nonexistent/path"
+  run "$INSTALL_SH" install --only "pdftoimgs"
+  assert_failure
+  assert_output --partial "Failed to download"
 }

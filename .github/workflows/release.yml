@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags: ['imgstotxt-v*', 'pdftoimgs-v*']
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.parse.outputs.name }}
+      source: ${{ steps.parse.outputs.source }}
+      version: ${{ steps.parse.outputs.version }}
+    steps:
+      - id: parse
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          NAME="${TAG%%-v*}"
+          VERSION="${TAG#*-}"
+          case "$NAME" in
+            imgstotxt)  SOURCE="python/imgs_to_txt.py" ;;
+            pdftoimgs)  SOURCE="python/pdf_to_imgs.py" ;;
+            *)          echo "Unknown script: $NAME"; exit 1 ;;
+          esac
+          echo "name=$NAME"    >> "$GITHUB_OUTPUT"
+          echo "source=$SOURCE" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: prepare
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - { runner: ubuntu-latest, os: linux, arch: x86_64 }
+          - { runner: macos-13, os: darwin, arch: x86_64 }
+          - { runner: macos-latest, os: darwin, arch: arm64 }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --group build
+
+      - name: Build binary
+        run: uv run pyinstaller --onefile --name "${{ needs.prepare.outputs.name }}" "${{ needs.prepare.outputs.source }}"
+
+      - name: Rename artifact
+        run: mv "dist/${{ needs.prepare.outputs.name }}" "dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}
+          path: dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}
+
+  release:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create versioned release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "${{ needs.prepare.outputs.name }} ${{ needs.prepare.outputs.version }}"
+          files: artifacts/*
+
+      - name: Update latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NAME: ${{ needs.prepare.outputs.name }}
+        run: |
+          TAG="${NAME}-latest"
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" artifacts/* \
+            --title "$NAME latest" \
+            --notes "Latest build of $NAME (from ${{ github.ref_name }})" \
+            --prerelease
