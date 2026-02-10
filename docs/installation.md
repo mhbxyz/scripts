@@ -33,6 +33,7 @@ Downloaded from the repository source.
 | `sshkeys` | Generate and manage SSH keys |
 | `homebackup` | Backup home directory to external drive |
 | `sortdownloads` | Sort Downloads folder into organized subdirectories |
+| `mygit` | Simplified git config management |
 
 ### Binary scripts
 
@@ -47,6 +48,7 @@ Pre-compiled binaries downloaded from GitHub Releases. Supported platforms: Linu
 
 | Script | Dependency | Install |
 |--------|-----------|---------|
+| `mygit` | `git` | `sudo apt install git` (Debian/Ubuntu) or `sudo pacman -S git` (Arch) |
 | `imgstotxt` | `tesseract-ocr` | `sudo apt install tesseract-ocr` (Debian/Ubuntu) or `sudo pacman -S tesseract` (Arch) |
 
 ## Update

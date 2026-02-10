@@ -37,6 +37,7 @@ See [docs/installation.md](docs/installation.md) for more details.
 | `sshkeys` | Generate and manage SSH keys |
 | `homebackup` | Backup home directory to external drive |
 | `sortdownloads` | Sort Downloads folder into organized subdirectories |
+| `mygit` | Simplified git config management (requires `git`) |
 
 ## Binary Scripts
 
