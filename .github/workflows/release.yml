@@ -33,7 +33,6 @@ jobs:
       matrix:
         include:
           - { runner: ubuntu-latest, os: linux, arch: x86_64 }
-          - { runner: macos-13, os: darwin, arch: x86_64 }
           - { runner: macos-latest, os: darwin, arch: arm64 }
     steps:
       - uses: actions/checkout@v4
