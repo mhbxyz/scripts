@@ -76,6 +76,41 @@ teardown_git_config() {
   unset GIT_CONFIG_GLOBAL
 }
 
+# ── Backup environment isolation ──
+
+setup_backup_env() {
+  export HOME_ORIG="$HOME"
+  export HOME="$(mktemp -d)"
+
+  # Create a realistic home structure
+  mkdir -p "$HOME/Documents" "$HOME/Pictures" "$HOME/.config"
+  printf "doc1\n" > "$HOME/Documents/file1.txt"
+  printf "doc2\n" > "$HOME/Documents/file2.txt"
+  printf "pic\n"  > "$HOME/Pictures/photo.jpg"
+  printf "cfg\n"  > "$HOME/.config/settings.conf"
+
+  # Directories that should be excluded by default
+  mkdir -p "$HOME/.cache" "$HOME/.local" "$HOME/node_modules"
+  printf "cache\n" > "$HOME/.cache/cached.tmp"
+  printf "local\n" > "$HOME/.local/state.db"
+  printf "nm\n"    > "$HOME/node_modules/pkg.js"
+
+  # Create a fake mount point
+  FAKE_MOUNT="$(mktemp -d)"
+  FAKE_DRIVE="$FAKE_MOUNT/TestDrive"
+  mkdir -p "$FAKE_DRIVE"
+
+  export HOMEBACKUP_MOUNT_BASES="$FAKE_MOUNT"
+  export FAKE_MOUNT FAKE_DRIVE
+}
+
+teardown_backup_env() {
+  rm -rf "$HOME"
+  rm -rf "$FAKE_MOUNT"
+  export HOME="$HOME_ORIG"
+  unset HOME_ORIG HOMEBACKUP_MOUNT_BASES FAKE_MOUNT FAKE_DRIVE
+}
+
 # ── Mock PATH ──
 
 setup_mocks() {

@@ -13,7 +13,7 @@ The **Useful Scripts** project is a collection of scripts designed to assist wit
 - **pdf_to_imgs.py**: Convert a PDF file into images, allowing customization of image resolution and format.
 
 ## Shell Scripts
-- **backup_home.sh**: A robust shell script for backing up your home directory, featuring options for file compression, exclusion, verification, and dry-run mode to simulate the backup process without any changes.
+- **homebackup.sh**: Backup your home directory to an external drive with subcommands (`run`, `list`), per-file progress, compression (`gzip`/`xz`/`zstd`/`none`), exclude patterns, archive verification, and dry-run mode.
 - **enable-emoji-support-for-arch.sh**: Enable emoji support on Arch-based Linux systems by installing emoji font packages and configuring fontconfig fallback. The script provides options for dry-run, verbose output, and selecting specific fonts to install.
 - **fix-pacman-gpg.sh**: Fix pacman GPGME errors on Arch/Manjaro systems by clearing package metadata, reinitializing the pacman keyring, and optionally refreshing keys and updating the mirror list.
 - **gpgkeys.sh**: Generate and manage GPG keys with interactive key generation, listing, exporting, deletion, backup/import, and GitHub integration. Supports ed25519 and rsa4096 algorithms, git signing configuration, and clipboard operations.
