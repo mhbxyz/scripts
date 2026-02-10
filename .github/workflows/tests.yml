@@ -1,0 +1,26 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y bats gnupg
+
+      - name: Install BATS libraries
+        run: |
+          sudo mkdir -p /usr/lib/bats
+          sudo git clone --depth 1 https://github.com/bats-core/bats-support /usr/lib/bats/bats-support
+          sudo git clone --depth 1 https://github.com/bats-core/bats-assert /usr/lib/bats/bats-assert
+          sudo git clone --depth 1 https://github.com/bats-core/bats-file /usr/lib/bats/bats-file
+
+      - name: Run tests
+        run: bats tests/

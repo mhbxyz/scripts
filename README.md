@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Shell](https://img.shields.io/badge/Shell-POSIX-green)
-![Tests](https://img.shields.io/badge/Tests-BATS-yellow)
+[![Tests](https://github.com/mhbxyz/scripts/actions/workflows/tests.yml/badge.svg)](https://github.com/mhbxyz/scripts/actions/workflows/tests.yml)
 
 A collection of shell and Python scripts to automate common tasks.
 
