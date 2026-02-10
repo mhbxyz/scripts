@@ -6,6 +6,31 @@
 The **Useful Scripts** project is a collection of scripts designed to assist with various tasks. These scripts span multiple programming languages and environments, offering developers handy tools to automate routine operations, streamline workflows, and enhance productivity.
 
 
+## Installation
+
+Install scripts to `~/.local/bin` with a single command:
+
+```sh
+# Interactive menu (choose which scripts to install)
+curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh
+
+# Install all scripts
+curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh -s -- --all
+
+# Install specific scripts
+curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh -s -- --only "gpgkeys sshkeys"
+
+# Custom install directory
+curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh -s -- --all --dir ~/bin
+
+# Update installed scripts
+curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh -s -- update
+
+# Uninstall all scripts
+curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh -s -- uninstall
+```
+
+
 ## Scripts
 
 ## Python Scripts

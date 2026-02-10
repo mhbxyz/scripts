@@ -111,6 +111,26 @@ teardown_backup_env() {
   unset HOME_ORIG HOMEBACKUP_MOUNT_BASES FAKE_MOUNT FAKE_DRIVE
 }
 
+# ── Install environment isolation ──
+
+setup_install_env() {
+  FAKE_REPO="$(mktemp -d)"
+  mkdir -p "$FAKE_REPO/shell"
+  # Create dummy scripts in the fake repo
+  for script in gpgkeys.sh sshkeys.sh homebackup.sh fix-pacman-gpg.sh \
+                enable-emoji-support-for-arch.sh uninstall-jetbrains-toolbox.sh; do
+    printf '#!/bin/sh\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
+  done
+  export SCRIPTS_REPO_URL="file://$FAKE_REPO"
+  export INSTALL_DIR="$(mktemp -d)"
+  export FAKE_REPO
+}
+
+teardown_install_env() {
+  rm -rf "$FAKE_REPO" "$INSTALL_DIR"
+  unset SCRIPTS_REPO_URL INSTALL_DIR FAKE_REPO
+}
+
 # ── Mock PATH ──
 
 setup_mocks() {
