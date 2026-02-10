@@ -241,36 +241,36 @@ teardown() {
 
 # ── Scheduling ──
 
-@test "schedule creates systemd timer and service files" {
+@test "schedule daily installs systemd timer" {
   run "$SORTDOWNLOADS" schedule daily --at 08:00
   assert_success
-  assert_output --partial "Installed systemd timer"
-  assert_file_exists "$HOME/.config/systemd/user/sortdownloads.timer"
-  assert_file_exists "$HOME/.config/systemd/user/sortdownloads.service"
+  assert_output --partial "Installed systemd timer: *-*-* 08:00:00"
+  # Verify mock received the right commands
+  assert_file_exists "$SORTDOWNLOADS_MOCK_DIR/calls"
+  run cat "$SORTDOWNLOADS_MOCK_DIR/calls"
+  assert_output --partial "daemon-reload"
+  assert_output --partial "enable"
 }
 
 @test "schedule weekly --start defaults to Mon" {
   run "$SORTDOWNLOADS" schedule weekly --start --at 10:00
   assert_success
-  run cat "$HOME/.config/systemd/user/sortdownloads.timer"
-  assert_output --partial "Mon"
+  assert_output --partial "Installed systemd timer: Mon *-*-* 10:00:00"
 }
 
 @test "schedule weekly --end defaults to Sun" {
   run "$SORTDOWNLOADS" schedule weekly --end --at 10:00
   assert_success
-  run cat "$HOME/.config/systemd/user/sortdownloads.timer"
-  assert_output --partial "Sun"
+  assert_output --partial "Installed systemd timer: Sun *-*-* 10:00:00"
 }
 
 @test "schedule monthly --end defaults to 28" {
   run "$SORTDOWNLOADS" schedule monthly --end --at 10:00
   assert_success
-  run cat "$HOME/.config/systemd/user/sortdownloads.timer"
-  assert_output --partial "28"
+  assert_output --partial "Installed systemd timer: *-*-28 10:00:00"
 }
 
-@test "unschedule removes timer files" {
+@test "unschedule removes systemd timer" {
   # First install
   run "$SORTDOWNLOADS" schedule daily
   assert_success
@@ -280,6 +280,7 @@ teardown() {
   run "$SORTDOWNLOADS" unschedule
   assert_success
   assert_output --partial "Removed systemd timer"
-  assert_file_not_exists "$HOME/.config/systemd/user/sortdownloads.timer"
-  assert_file_not_exists "$HOME/.config/systemd/user/sortdownloads.service"
+  # Verify mock received disable command
+  run cat "$SORTDOWNLOADS_MOCK_DIR/calls"
+  assert_output --partial "disable"
 }
