@@ -34,6 +34,9 @@ Downloaded from the repository source.
 | `homebackup` | Backup home directory to external drive |
 | `sortdownloads` | Sort Downloads folder into organized subdirectories |
 | `mygit` | Simplified git config management |
+| `dotfiles` | Manage dotfiles with symlinks |
+| `mkproject` | Scaffold new projects from templates |
+| `cleanup` | Free disk space by cleaning caches and temp files |
 
 ### Binary scripts
 
@@ -49,6 +52,7 @@ Pre-compiled binaries downloaded from GitHub Releases. Supported platforms: Linu
 | Script | Dependency | Install |
 |--------|-----------|---------|
 | `mygit` | `git` | `sudo apt install git` (Debian/Ubuntu) or `sudo pacman -S git` (Arch) |
+| `mkproject` | `git` (optional) | `sudo apt install git` (Debian/Ubuntu) or `sudo pacman -S git` (Arch) |
 | `imgstotxt` | `tesseract-ocr` | `sudo apt install tesseract-ocr` (Debian/Ubuntu) or `sudo pacman -S tesseract` (Arch) |
 
 ## Update

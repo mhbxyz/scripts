@@ -69,11 +69,11 @@ teardown() {
 
 # ── Install e2e ──
 
-@test "install --all installs all 7 scripts" {
+@test "install --all installs all 10 scripts" {
   run "$INSTALL_SH" install --all
   assert_success
-  assert_output --partial "Installed 7 script(s)"
-  for name in gpgkeys sshkeys homebackup sortdownloads mygit imgstotxt pdftoimgs; do
+  assert_output --partial "Installed 10 script(s)"
+  for name in gpgkeys sshkeys homebackup sortdownloads mygit dotfiles mkproject cleanup imgstotxt pdftoimgs; do
     assert [ -f "$INSTALL_DIR/$name" ]
   done
 }
@@ -152,8 +152,8 @@ teardown() {
   "$INSTALL_SH" install --all
   run "$INSTALL_SH" uninstall --all
   assert_success
-  assert_output --partial "Removed 7 script(s)"
-  for name in gpgkeys sshkeys homebackup sortdownloads mygit imgstotxt pdftoimgs; do
+  assert_output --partial "Removed 10 script(s)"
+  for name in gpgkeys sshkeys homebackup sortdownloads mygit dotfiles mkproject cleanup imgstotxt pdftoimgs; do
     assert [ ! -f "$INSTALL_DIR/$name" ]
   done
 }
@@ -240,7 +240,7 @@ teardown() {
 @test "no subcommand defaults to install" {
   run "$INSTALL_SH" --all
   assert_success
-  assert_output --partial "Installed 7 script(s)"
+  assert_output --partial "Installed 10 script(s)"
 }
 
 @test "--only without subcommand defaults to install" {
@@ -280,7 +280,7 @@ teardown() {
 @test "install --all stores metadata for all scripts" {
   run "$INSTALL_SH" install --all
   assert_success
-  for name in gpgkeys sshkeys homebackup sortdownloads mygit imgstotxt pdftoimgs; do
+  for name in gpgkeys sshkeys homebackup sortdownloads mygit dotfiles mkproject cleanup imgstotxt pdftoimgs; do
     run grep "^${name}|" "$INSTALL_DIR/.scripts-meta"
     assert_success
   done

@@ -117,7 +117,7 @@ setup_install_env() {
   FAKE_REPO="$(mktemp -d)"
   mkdir -p "$FAKE_REPO/shell"
   # Create dummy shell scripts in the fake repo (with VERSION)
-  for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh mygit.sh; do
+  for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh mygit.sh dotfiles.sh mkproject.sh cleanup.sh; do
     printf '#!/bin/sh\nVERSION="1.0.0"\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
   done
   # Create dummy binaries in the fake repo (release structure) with .sha256 sidecars
@@ -206,6 +206,67 @@ teardown_mygit_env() {
   rm -rf "$HOME"
   export HOME="$HOME_ORIG"
   unset GIT_CONFIG_GLOBAL HOME_ORIG MYGIT_TEST_REPO
+}
+
+# ── Dotfiles environment isolation ──
+
+setup_dotfiles_env() {
+  export HOME_ORIG="$HOME"
+  export HOME="$(mktemp -d)"
+
+  # Create realistic config files
+  mkdir -p "$HOME/.config/nvim" "$HOME/.ssh"
+  printf 'alias ll="ls -la"\n' > "$HOME/.bashrc"
+  printf 'set number\n' > "$HOME/.config/nvim/init.lua"
+  printf '[user]\n  name = Test\n' > "$HOME/.gitconfig"
+
+  # Use a non-existing path so init can create it
+  DOTFILES_DIR="$(mktemp -d)/dotfiles"
+  export DOTFILES_DIR
+}
+
+teardown_dotfiles_env() {
+  rm -rf "$HOME"
+  rm -rf "$(dirname "$DOTFILES_DIR")"
+  export HOME="$HOME_ORIG"
+  unset HOME_ORIG DOTFILES_DIR
+}
+
+# ── Mkproject environment isolation ──
+
+setup_mkproject_env() {
+  export HOME_ORIG="$HOME"
+  export HOME="$(mktemp -d)"
+  export GIT_CONFIG_GLOBAL="$(mktemp)"
+  git config --global user.name "Test User" 2>/dev/null || true
+  git config --global user.email "test@test.com" 2>/dev/null || true
+
+  PROJECTS_DIR="$(mktemp -d)"
+  export PROJECTS_DIR
+}
+
+teardown_mkproject_env() {
+  rm -f "$GIT_CONFIG_GLOBAL"
+  rm -rf "$HOME"
+  rm -rf "$PROJECTS_DIR"
+  export HOME="$HOME_ORIG"
+  unset HOME_ORIG GIT_CONFIG_GLOBAL PROJECTS_DIR
+}
+
+# ── Cleanup environment isolation ──
+
+setup_cleanup_env() {
+  export HOME_ORIG="$HOME"
+  export HOME="$(mktemp -d)"
+
+  # Create structure for cleanup targets
+  mkdir -p "$HOME/.cache" "$HOME/.local/share/Trash" "$HOME/Downloads"
+}
+
+teardown_cleanup_env() {
+  rm -rf "$HOME"
+  export HOME="$HOME_ORIG"
+  unset HOME_ORIG
 }
 
 # ── Mock PATH ──

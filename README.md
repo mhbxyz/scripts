@@ -38,6 +38,9 @@ See [docs/installation.md](docs/installation.md) for more details.
 | `homebackup` | Backup home directory to external drive |
 | `sortdownloads` | Sort Downloads folder into organized subdirectories |
 | `mygit` | Simplified git config management (requires `git`) |
+| `dotfiles` | Manage dotfiles with symlinks |
+| `mkproject` | Scaffold new projects from templates |
+| `cleanup` | Free disk space by cleaning caches and temp files |
 
 ## Binary Scripts
 
