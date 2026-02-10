@@ -23,6 +23,22 @@ case "$1" in
         ;;
     esac
     ;;
+  ssh-key)
+    case "$2" in
+      add)
+        printf "SSH key added (mock)\n"
+        exit 0
+        ;;
+      list)
+        printf "ID: 12345  Title: test-key  Key: ssh-ed25519 AAAA...  Added: 2025-01-01\n"
+        exit 0
+        ;;
+      delete)
+        printf "SSH key deleted (mock)\n"
+        exit 0
+        ;;
+    esac
+    ;;
 esac
 
 printf "gh mock: unhandled args: %s\n" "$*" >&2

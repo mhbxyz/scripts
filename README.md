@@ -17,8 +17,7 @@ The **Useful Scripts** project is a collection of scripts designed to assist wit
 - **enable-emoji-support-for-arch.sh**: Enable emoji support on Arch-based Linux systems by installing emoji font packages and configuring fontconfig fallback. The script provides options for dry-run, verbose output, and selecting specific fonts to install.
 - **fix-pacman-gpg.sh**: Fix pacman GPGME errors on Arch/Manjaro systems by clearing package metadata, reinitializing the pacman keyring, and optionally refreshing keys and updating the mirror list.
 - **gpgkeys.sh**: Generate and manage GPG keys with interactive key generation, listing, exporting, deletion, backup/import, and GitHub integration. Supports ed25519 and rsa4096 algorithms, git signing configuration, and clipboard operations.
-- **ssh-conf.sh**: Manage your SSH config file easily with options to add, remove, list, show, edit, and back up SSH host entries.
-- **ssh-keybuild.sh**: Generate SSH keys with options to specify email, key type, and name. Supports adding keys to SSH agent, copying public keys to clipboard, and updating SSH config.
+- **sshkeys.sh**: Generate and manage SSH keys with key generation, listing, deletion, ~/.ssh/config management (add/remove/list/show/edit/backup), and GitHub integration. Supports ed25519 and rsa key types, ssh-agent, clipboard operations, and interactive or scripted usage.
 - **uninstall-jetbrains-toolbox.sh**: Uninstall JetBrains Toolbox from Linux systems, with optional removal of installed IDEs, configurations, and caches.
 
 
