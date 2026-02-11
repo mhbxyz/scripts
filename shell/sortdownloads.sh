@@ -5,7 +5,7 @@
 
 set -eu
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # ── Constants ──
 
@@ -61,7 +61,7 @@ check_dep() {
 
 confirm() {
   printf "%s [y/N]: " "$1"
-  read -r answer
+  read -r answer </dev/tty 2>/dev/null || answer=""
   case "$answer" in
     y|Y|yes|Yes) return 0 ;;
     *) return 1 ;;

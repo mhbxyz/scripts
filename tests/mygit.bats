@@ -50,7 +50,7 @@ teardown() {
 @test "--version prints version" {
   run "$MYGIT" --version
   assert_success
-  assert_output "1.0.0"
+  assert_output "1.0.1"
 }
 
 # ── User ──

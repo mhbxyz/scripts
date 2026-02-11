@@ -5,7 +5,7 @@
 
 set -eu
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # ── Constants ──
 
@@ -70,7 +70,7 @@ check_dep() {
 
 confirm() {
   printf "%s [y/N]: " "$1"
-  read -r answer
+  read -r answer </dev/tty 2>/dev/null || answer=""
   case "$answer" in
     y|Y|yes|Yes) return 0 ;;
     *) return 1 ;;
@@ -138,7 +138,7 @@ select_drive() {
 
   count=$(printf "%s\n" "$drives" | wc -l)
   printf "\nSelect drive [1-%d]: " "$count"
-  read -r choice
+  read -r choice </dev/tty
   case "${choice:-}" in
     ''|*[!0-9]*) die "Invalid selection." ;;
   esac

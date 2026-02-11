@@ -5,7 +5,7 @@
 
 set -eu
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # ── Constants ──
 
@@ -56,7 +56,7 @@ check_dep() {
 
 confirm() {
   printf "%s [y/N]: " "$1"
-  read -r answer
+  read -r answer </dev/tty 2>/dev/null || answer=""
   case "$answer" in
     y|Y|yes|Yes) return 0 ;;
     *) return 1 ;;
@@ -147,7 +147,7 @@ select_key() {
   done < "$tmpkeys"
 
   printf "\nSelect key [1-%d]: " "$count"
-  read -r choice
+  read -r choice </dev/tty
   if [ -z "$choice" ] || [ "$choice" -lt 1 ] 2>/dev/null || [ "$choice" -gt "$count" ] 2>/dev/null; then
     die "Invalid selection."
   fi
@@ -254,7 +254,7 @@ cmd_generate() {
     else
       printf "  Real name: "
     fi
-    read -r name
+    read -r name </dev/tty
     if [ -z "$name" ] && [ -n "$default_name" ]; then
       name="$default_name"
     fi
@@ -268,7 +268,7 @@ cmd_generate() {
     else
       printf "  Email: "
     fi
-    read -r email
+    read -r email </dev/tty
     if [ -z "$email" ] && [ -n "$default_email" ]; then
       email="$default_email"
     fi
@@ -595,7 +595,7 @@ cmd_github() {
       printf "\n${BLUE}GPG keys on GitHub:${RESET}\n"
       gh gpg-key list
       printf "\nEnter the GPG key ID to remove: "
-      read -r remove_id
+      read -r remove_id </dev/tty
       [ -n "$remove_id" ] || die "No key ID provided."
       if confirm "Remove key $remove_id from GitHub?"; then
         gh gpg-key delete "$remove_id" --yes 2>&1
