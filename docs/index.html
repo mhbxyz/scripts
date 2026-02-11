@@ -29,6 +29,10 @@
     max-width: 700px;
     width: 100%;
     text-align: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 2rem;
+    border-radius: 12px;
   }
   .banner { max-width: 100%; height: auto; margin-bottom: 1rem; }
   .badges { margin-bottom: 1rem; }
@@ -97,7 +101,7 @@ function copyInstall(btn) {
 (function () {
   var canvas = document.getElementById("stars");
   var ctx = canvas.getContext("2d");
-  var stars = [];
+  var items = [];
   var maxStars = 20;
 
   function resize() {
@@ -107,57 +111,37 @@ function copyInstall(btn) {
   window.addEventListener("resize", resize);
   resize();
 
-  var trailLen = 8;
-
   function spawn() {
-    var x = Math.random() * canvas.width * 1.2;
-    var y = Math.random() * canvas.height * 0.6;
-    var speed = 6 + Math.random() * 10;
-    var life = 40 + Math.random() * 60;
-    var maxLife = life;
-    var hues = [40, 20, 0, 340, 220, 240];
+    var x = Math.random() * canvas.width;
+    var y = Math.random() * canvas.height;
+    var life = 120 + Math.random() * 180;
+    var hues = [40, 20, 0, 340, 220, 240, 120];
     var hue = hues[Math.floor(Math.random() * hues.length)];
-    stars.push({ x: x, y: y, speed: speed, life: life, maxLife: maxLife, hue: hue, trail: [] });
+    var chars = "0123456789ABCDEF";
+    var digit = chars[Math.floor(Math.random() * chars.length)];
+    var size = 10 + Math.random() * 30;
+    items.push({ x: x, y: y, life: life, maxLife: life, hue: hue, digit: digit, size: size });
   }
 
   function tick() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (stars.length < maxStars && Math.random() < 0.15) spawn();
-    for (var i = stars.length - 1; i >= 0; i--) {
-      var s = stars[i];
-      s.trail.push({ x: s.x, y: s.y });
-      if (s.trail.length > trailLen) s.trail.shift();
-      s.x -= s.speed * 0.5;
-      s.y += s.speed;
+    if (items.length < maxStars && Math.random() < 0.15) spawn();
+    for (var i = items.length - 1; i >= 0; i--) {
+      var s = items[i];
       s.life--;
       var t = s.life / s.maxLife;
       var baseOpacity = t < 0.5 ? t * 2 : (1 - t) * 2;
-      for (var j = 1; j < s.trail.length; j++) {
-        var fade = j / s.trail.length;
-        ctx.save();
-        ctx.strokeStyle = "hsla(" + s.hue + ",70%,80%," + (baseOpacity * fade * 0.5) + ")";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(s.trail[j - 1].x, s.trail[j - 1].y);
-        ctx.lineTo(s.trail[j].x, s.trail[j].y);
-        ctx.stroke();
-        ctx.restore();
-      }
-      var angle = (1 - s.life / s.maxLife) * Math.PI * 4;
+      var scale = t > 0.5 ? 0.5 + (1 - t) : 1;
       ctx.save();
       ctx.translate(s.x, s.y);
-      ctx.rotate(angle);
-      ctx.fillStyle = "hsla(" + s.hue + ",70%,85%," + baseOpacity + ")";
-      ctx.beginPath();
-      for (var k = 0; k < 4; k++) {
-        var a = k * Math.PI / 2;
-        ctx.lineTo(Math.cos(a) * 4, Math.sin(a) * 4);
-        ctx.lineTo(Math.cos(a + Math.PI / 4) * 1.2, Math.sin(a + Math.PI / 4) * 1.2);
-      }
-      ctx.closePath();
-      ctx.fill();
+      ctx.scale(scale, scale);
+      ctx.font = s.size + "px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "hsla(" + s.hue + ",70%,80%," + baseOpacity + ")";
+      ctx.fillText(s.digit, 0, 0);
       ctx.restore();
-      if (s.life <= 0) stars.splice(i, 1);
+      if (s.life <= 0) items.splice(i, 1);
     }
     requestAnimationFrame(tick);
   }
