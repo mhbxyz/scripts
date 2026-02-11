@@ -45,6 +45,22 @@
     font-size: 0.9rem;
     line-height: 1.5;
   }
+  .install-block { position: relative; }
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #ccc;
+    font-family: monospace;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .copy-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
   a { color: #7aafff; }
   .more { margin-top: 0.5rem; font-size: 0.9rem; }
 </style>
@@ -60,7 +76,10 @@
     <a href="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml"><img src="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml/badge.svg" alt="Tests" /></a>
   </div>
   <p class="intro"><em>A collection of shell and Python scripts to automate common tasks.</em></p>
-  <pre><code>curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh</code></pre>
+  <div class="install-block">
+    <pre><code id="install-cmd">curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh</code></pre>
+    <button class="copy-btn" onclick="copyInstall(this)" title="Copy">&#x1F4CB;</button>
+  </div>
   <pre><code>sh -s -- --all                    # Install all scripts
 sh -s -- --only "gpgkeys sshkeys" # Install specific scripts
 sh -s -- update                   # Update installed scripts
@@ -68,6 +87,13 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
   <p class="more"><a href="installation.md">More details</a> · <a href="https://github.com/mhbxyz">mhbxyz</a> · <a href="https://github.com/mhkb-agency">mhkb agency</a></p>
 </div>
 <script>
+function copyInstall(btn) {
+  var text = document.getElementById("install-cmd").textContent;
+  navigator.clipboard.writeText(text).then(function () {
+    btn.textContent = "\u2705";
+    setTimeout(function () { btn.textContent = "\uD83D\uDCCB"; }, 1500);
+  });
+}
 (function () {
   var canvas = document.getElementById("stars");
   var ctx = canvas.getContext("2d");
