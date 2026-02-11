@@ -1,18 +1,15 @@
-<pre>
-███████╗ ██████╗██████╗ ██╗██████╗ ████████╗███████╗
-██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝██╔════╝
-███████╗██║     ██████╔╝██║██████╔╝   ██║   ███████╗
-╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ╚════██║
-███████║╚██████╗██║  ██║██║██║        ██║   ███████║
-╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ╚══════╝
-</pre>
+<p align="center">
+  <img src="assets/animated-banner.apng" alt="scripts:/$" />
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Shell](https://img.shields.io/badge/Shell-POSIX-green)
-![Python](https://img.shields.io/badge/Python-≥3.11-3776AB)
-[![Tests](https://github.com/mhbxyz/scripts/actions/workflows/tests.yml/badge.svg)](https://github.com/mhbxyz/scripts/actions/workflows/tests.yml)
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
+  <img src="https://img.shields.io/badge/Shell-POSIX-green" alt="Shell" />
+  <img src="https://img.shields.io/badge/Python-≥3.11-3776AB" alt="Python" />
+  <a href="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml"><img src="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml/badge.svg" alt="Tests" /></a>
+</p>
 
-A collection of shell and Python scripts to automate common tasks.
+<p align="center"><em>A collection of shell and Python scripts to automate common tasks.</em></p>
 
 ## Install
 
