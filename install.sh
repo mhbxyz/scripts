@@ -363,19 +363,19 @@ check_path() {
 }
 
 show_menu() {
-  info "Available scripts:"
-  printf "\n"
+  info "Available scripts:" >/dev/tty
+  printf "\n" >/dev/tty
   _i=1
   _total=$(manifest_count)
   while [ "$_i" -le "$_total" ]; do
     _entry=$(manifest_entry "$_i")
     _name=$(manifest_name "$_entry")
     _desc=$(manifest_desc "$_entry")
-    printf "  %d) %-35s %s\n" "$_i" "$_name" "$_desc"
+    printf "  %d) %-35s %s\n" "$_i" "$_name" "$_desc" >/dev/tty
     _i=$((_i + 1))
   done
-  printf "  a) All scripts\n"
-  printf "\nSelect scripts to install (e.g. 1 3 5 or a): "
+  printf "  a) All scripts\n" >/dev/tty
+  printf "\nSelect scripts to install (e.g. 1 3 5 or a): " >/dev/tty
   read -r _choice </dev/tty
 
   if [ "$_choice" = "a" ] || [ "$_choice" = "A" ]; then
