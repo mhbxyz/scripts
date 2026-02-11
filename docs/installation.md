@@ -3,7 +3,7 @@
 ## Quick install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh
+curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh
 ```
 
 This opens an interactive menu to select which scripts to install.

@@ -2,7 +2,7 @@
 
 load test_helper
 
-INSTALL_SH="$BATS_TEST_DIRNAME/../install.sh"
+INSTALL_SH="$BATS_TEST_DIRNAME/../docs/install.sh"
 
 setup() {
   setup_install_env

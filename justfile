@@ -34,4 +34,4 @@ build-all: (build "imgstotxt") (build "pdftoimgs")
 
 # Lancer l'installeur localement
 install *args:
-    sh install.sh {{args}}
+    sh docs/install.sh {{args}}

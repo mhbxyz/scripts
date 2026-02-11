@@ -75,11 +75,11 @@ The CI workflow will:
 │   ├── test_helper.bash    # Shared test helpers
 │   ├── install.bats        # Installer tests
 │   └── *.bats              # Per-script tests
-├── docs/                   # Documentation
+├── docs/                   # Documentation + installer
+│   └── install.sh          # Installer script
 ├── .github/workflows/      # CI workflows
 │   ├── tests.yml           # Test + lint on push/PR
 │   └── release.yml         # Build + release on tag
-├── install.sh              # Installer script
 ├── pyproject.toml          # Python project config (uv)
 └── justfile                # Development recipes
 ```

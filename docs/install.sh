@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Installer for mhbxyz/scripts — shell utilities
-# Usage: curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh
+# Usage: curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh
 
 set -eu
 
@@ -428,7 +428,7 @@ Available scripts:
   pdftoimgs                      Convert PDF to images
 
 Examples:
-  curl -fsSL https://raw.githubusercontent.com/mhbxyz/scripts/main/install.sh | sh
+  curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh
   curl -fsSL .../install.sh | sh -s -- --all
   curl -fsSL .../install.sh | sh -s -- --only "gpgkeys sshkeys"
   curl -fsSL .../install.sh | sh -s -- uninstall --all
