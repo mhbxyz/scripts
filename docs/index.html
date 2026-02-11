@@ -87,9 +87,11 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
     var x = Math.random() * canvas.width * 1.2;
     var y = Math.random() * canvas.height * 0.6;
     var speed = 6 + Math.random() * 10;
-    var life = 20 + Math.random() * 30;
+    var life = 40 + Math.random() * 60;
     var maxLife = life;
-    stars.push({ x: x, y: y, speed: speed, life: life, maxLife: maxLife, trail: [] });
+    var hues = [40, 20, 0, 340, 220, 240];
+    var hue = hues[Math.floor(Math.random() * hues.length)];
+    stars.push({ x: x, y: y, speed: speed, life: life, maxLife: maxLife, hue: hue, trail: [] });
   }
 
   function tick() {
@@ -107,7 +109,7 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
       for (var j = 1; j < s.trail.length; j++) {
         var fade = j / s.trail.length;
         ctx.save();
-        ctx.strokeStyle = "rgba(255,255,255," + (baseOpacity * fade * 0.5) + ")";
+        ctx.strokeStyle = "hsla(" + s.hue + ",70%,80%," + (baseOpacity * fade * 0.5) + ")";
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(s.trail[j - 1].x, s.trail[j - 1].y);
@@ -119,7 +121,7 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
       ctx.save();
       ctx.translate(s.x, s.y);
       ctx.rotate(angle);
-      ctx.fillStyle = "rgba(255,255,255," + baseOpacity + ")";
+      ctx.fillStyle = "hsla(" + s.hue + ",70%,85%," + baseOpacity + ")";
       ctx.beginPath();
       for (var k = 0; k < 4; k++) {
         var a = k * Math.PI / 2;
