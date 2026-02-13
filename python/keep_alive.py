@@ -7,9 +7,18 @@ import subprocess
 import time
 from datetime import datetime
 
+if os.environ.get("DISPLAY") and not os.environ.get("XAUTHORITY"):
+    for _xauth in [
+        os.path.expanduser("~/.Xauthority"),
+        f"/run/user/{os.getuid()}/gdm/Xauthority",
+    ]:
+        if os.path.exists(_xauth):
+            os.environ["XAUTHORITY"] = _xauth
+            break
+
 import pyautogui
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.1
