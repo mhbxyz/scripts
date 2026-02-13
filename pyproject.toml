@@ -8,6 +8,7 @@ dependencies = [
     "pillow",
     "pytesseract",
     "pymupdf",
+    "pyautogui",
 ]
 
 [dependency-groups]

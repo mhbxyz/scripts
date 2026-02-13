@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ['imgstotxt-v*', 'pdftoimgs-v*']
+    tags: ['imgstotxt-v*', 'pdftoimgs-v*', 'keepalive-v*']
 
 jobs:
   prepare:
@@ -20,6 +20,7 @@ jobs:
           case "$NAME" in
             imgstotxt)  SOURCE="python/imgs_to_txt.py" ;;
             pdftoimgs)  SOURCE="python/pdf_to_imgs.py" ;;
+            keepalive)  SOURCE="python/keep_alive.py" ;;
             *)          echo "Unknown script: $NAME"; exit 1 ;;
           esac
           echo "name=$NAME"    >> "$GITHUB_OUTPUT"

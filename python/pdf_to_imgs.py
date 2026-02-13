@@ -50,9 +50,18 @@ def pdf_to_images(pdf_path, dpi=300, fmt="png"):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert a PDF into images.")
     parser.add_argument("pdf_path", help="Path to the PDF file to convert.")
-    parser.add_argument("--dpi", type=int, default=300, help="Image resolution (default: 300).")
-    parser.add_argument("--fmt", default="png", choices=["png", "jpeg", "jpg", "tiff"], help="Image output format.")
-    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+    parser.add_argument(
+        "--dpi", type=int, default=300, help="Image resolution (default: 300)."
+    )
+    parser.add_argument(
+        "--fmt",
+        default="png",
+        choices=["png", "jpeg", "jpg", "tiff"],
+        help="Image output format.",
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
+    )
 
     args = parser.parse_args()
     pdf_to_images(args.pdf_path, dpi=args.dpi, fmt=args.fmt)

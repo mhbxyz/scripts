@@ -121,7 +121,7 @@ setup_install_env() {
     printf '#!/bin/sh\nVERSION="1.0.0"\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
   done
   # Create dummy binaries in the fake repo (release structure) with .sha256 sidecars
-  for tag in imgstotxt-latest pdftoimgs-latest; do
+  for tag in imgstotxt-latest pdftoimgs-latest keepalive-latest; do
     name="${tag%-latest}"
     mkdir -p "$FAKE_REPO/$tag"
     for platform in linux-x86_64 darwin-x86_64 darwin-arm64; do

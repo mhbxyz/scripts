@@ -25,12 +25,13 @@ build script:
     case "{{script}}" in
         imgstotxt)  src="python/imgs_to_txt.py" ;;
         pdftoimgs)  src="python/pdf_to_imgs.py" ;;
+        keepalive)  src="python/keep_alive.py" ;;
         *)          echo "Unknown script: {{script}}"; exit 1 ;;
     esac
     uv run --group build pyinstaller --onefile --name "{{script}}" "$src"
 
 # Build tous les binaires
-build-all: (build "imgstotxt") (build "pdftoimgs")
+build-all: (build "imgstotxt") (build "pdftoimgs") (build "keepalive")
 
 # Lancer l'installeur localement
 install *args:

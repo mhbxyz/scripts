@@ -47,6 +47,7 @@ Pre-compiled from Python, downloaded automatically from GitHub Releases.
 |--------|-------------|
 | `imgstotxt` | OCR images to text file |
 | `pdftoimgs` | Convert PDF to images |
+| `keepalive` | Simulate activity to prevent idle status |
 
 ## Development
 

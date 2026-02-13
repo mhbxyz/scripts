@@ -26,7 +26,8 @@ dotfiles|dotfiles.sh|Manage dotfiles with symlinks|shell
 mkproject|mkproject.sh|Scaffold new projects from templates|shell
 cleanup|cleanup.sh|Free disk space by cleaning caches and temp files|shell
 imgstotxt|imgstotxt|OCR images to text file|binary|imgstotxt-latest
-pdftoimgs|pdftoimgs|Convert PDF to images|binary|pdftoimgs-latest"
+pdftoimgs|pdftoimgs|Convert PDF to images|binary|pdftoimgs-latest
+keepalive|keepalive|Simulate activity to prevent idle status|binary|keepalive-latest"
 
 # ── Temp file cleanup ──
 
@@ -426,6 +427,7 @@ Available scripts:
   cleanup                        Free disk space by cleaning caches and temp files
   imgstotxt                      OCR images to text file
   pdftoimgs                      Convert PDF to images
+  keepalive                      Simulate activity to prevent idle status
 
 Examples:
   curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh
