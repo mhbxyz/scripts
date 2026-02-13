@@ -4,6 +4,7 @@ import os
 import random
 import re
 import subprocess
+import sys
 import time
 from datetime import datetime
 
@@ -18,7 +19,7 @@ if os.environ.get("DISPLAY") and not os.environ.get("XAUTHORITY"):
 
 import pyautogui
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.1
@@ -67,7 +68,9 @@ def _parse_monitors_mutter():
     """Parse monitors via Mutter D-Bus API (GNOME Wayland)."""
     output = subprocess.check_output(
         ["python3", "-c", _MUTTER_MONITORS_SCRIPT],
-        text=True, stderr=subprocess.DEVNULL, timeout=5,
+        text=True,
+        stderr=subprocess.DEVNULL,
+        timeout=5,
     )
     return [(m["x"], m["y"], m["w"], m["h"]) for m in json.loads(output)]
 
@@ -76,7 +79,9 @@ def _parse_monitors_kscreen():
     """Parse monitors from kscreen-doctor (KDE Wayland)."""
     output = subprocess.check_output(
         ["kscreen-doctor", "--outputs"],
-        text=True, stderr=subprocess.DEVNULL, timeout=5,
+        text=True,
+        stderr=subprocess.DEVNULL,
+        timeout=5,
     )
     monitors = []
     for block in re.split(r"(?=Output:)", output):
@@ -92,7 +97,10 @@ def _parse_monitors_kscreen():
 def _parse_monitors_xrandr():
     """Parse monitors from xrandr (X11 / XWayland)."""
     output = subprocess.check_output(
-        ["xrandr", "--query"], text=True, stderr=subprocess.DEVNULL, timeout=5,
+        ["xrandr", "--query"],
+        text=True,
+        stderr=subprocess.DEVNULL,
+        timeout=5,
     )
     monitors = []
     for line in output.splitlines():
@@ -244,6 +252,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--version", action="version", version=f"%(prog)s {__version__}"
     )
+
+    if len(sys.argv) > 1 and sys.argv[1] == "help":
+        parser.print_help()
+        raise SystemExit(0)
 
     args = parser.parse_args()
     keep_alive(
