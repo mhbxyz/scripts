@@ -1,152 +1,244 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>scripts:/$</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
-  body {
-    background: #000;
-    color: #fff;
-    font-family: monospace;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
-  .container {
-    max-width: 700px;
-    width: 100%;
-    text-align: center;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    padding: 2rem;
-    border-radius: 12px;
-  }
-  .banner { max-width: 100%; height: auto; margin-bottom: 1rem; }
-  .badges { margin-bottom: 1rem; }
-  .badges img { margin: 0.2rem; }
-  .intro { margin-bottom: 2rem; font-size: 1rem; color: #ccc; }
-  pre {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    text-align: left;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-  .install-block { position: relative; }
-  .copy-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    color: #ccc;
-    font-family: monospace;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-  }
-  .copy-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
-  a { color: #7aafff; }
-  .more { margin-top: 0.5rem; font-size: 0.9rem; }
-</style>
-</head>
-<body>
-<canvas id="stars"></canvas>
-<div class="container">
-  <img class="banner" src="assets/animated-banner.apng" alt="scripts:/$" />
-  <div class="badges">
-    <a href="https://github.com/mhbxyz/scripts/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
-    <img src="https://img.shields.io/badge/Shell-POSIX-green" alt="Shell" />
-    <img src="https://img.shields.io/badge/Python-≥3.11-3776AB" alt="Python" />
-    <a href="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml"><img src="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml/badge.svg" alt="Tests" /></a>
-  </div>
-  <p class="intro"><em>A collection of shell and Python scripts to automate common tasks.</em></p>
-  <div class="install-block">
-    <pre><code id="install-cmd">curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh</code></pre>
-    <button class="copy-btn" onclick="copyInstall(this)" title="Copy">&#x1F4CB;</button>
-  </div>
-  <pre><code>sh -s -- --all                    # Install all scripts
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>scripts:/$</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                background: #000;
+                color: #fff;
+                font-family: monospace;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 2rem 1rem;
+            }
+            canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+            }
+            .container {
+                max-width: 700px;
+                width: 100%;
+                text-align: center;
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                padding: 2rem;
+                border-radius: 12px;
+            }
+            .banner {
+                max-width: 100%;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+            .badges {
+                margin-bottom: 1rem;
+            }
+            .badges img {
+                margin: 0.2rem;
+            }
+            .intro {
+                margin-bottom: 2rem;
+                font-size: 1rem;
+                color: #ccc;
+            }
+            pre {
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 8px;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                text-align: left;
+                white-space: pre-wrap;
+                overflow-wrap: break-word;
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            .install-block {
+                position: relative;
+            }
+            .copy-btn {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 4px;
+                color: #ccc;
+                font-family: monospace;
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+                cursor: pointer;
+                transition:
+                    background 0.2s,
+                    color 0.2s;
+            }
+            .copy-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+            }
+            a {
+                color: #7aafff;
+            }
+            .more {
+                margin-top: 0.5rem;
+                font-size: 0.9rem;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="stars"></canvas>
+        <div class="container">
+            <img
+                class="banner"
+                src="assets/animated-banner.apng"
+                alt="scripts:/$"
+            />
+            <div class="badges">
+                <a href="https://github.com/mhbxyz/scripts/blob/main/LICENSE"
+                    ><img
+                        src="https://img.shields.io/badge/License-MIT-blue.svg"
+                        alt="License: MIT"
+                /></a>
+                <img
+                    src="https://img.shields.io/badge/Shell-POSIX-green"
+                    alt="Shell"
+                />
+                <img
+                    src="https://img.shields.io/badge/Python-≥3.11-3776AB"
+                    alt="Python"
+                />
+                <a
+                    href="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml"
+                    ><img
+                        src="https://github.com/mhbxyz/scripts/actions/workflows/tests.yml/badge.svg"
+                        alt="Tests"
+                /></a>
+            </div>
+            <p class="intro">
+                <em
+                    >A collection of shell and Python scripts to automate common
+                    tasks.</em
+                >
+            </p>
+            <div class="install-block">
+                <pre><code id="install-cmd">curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh</code></pre>
+                <button
+                    class="copy-btn"
+                    onclick="copyInstall(this)"
+                    title="Copy"
+                >
+                    &#x1F4CB;
+                </button>
+            </div>
+            <pre><code>sh -s -- --all                    # Install all scripts
 sh -s -- --only "gpgkeys sshkeys" # Install specific scripts
 sh -s -- update                   # Update installed scripts
 sh -s -- uninstall                # Uninstall all scripts</code></pre>
-  <p class="more"><a href="installation.md">More details</a> · <a href="https://github.com/mhbxyz" target="_blank" rel="noopener">mhbxyz</a> · <a href="https://github.com/mhkb-agency" target="_blank" rel="noopener">mhkb agency</a></p>
-</div>
-<script>
-function copyInstall(btn) {
-  var text = document.getElementById("install-cmd").textContent;
-  navigator.clipboard.writeText(text).then(function () {
-    btn.textContent = "\u2705";
-    setTimeout(function () { btn.textContent = "\uD83D\uDCCB"; }, 1500);
-  });
-}
-(function () {
-  var canvas = document.getElementById("stars");
-  var ctx = canvas.getContext("2d");
-  var items = [];
-  var maxStars = 20;
+            <p class="more">
+                <a
+                    href="https://github.com/mhbxyz/scripts/blob/main/docs/installation.md"
+                    >More details</a
+                >
+                ·
+                <a
+                    href="https://github.com/mhbxyz"
+                    target="_blank"
+                    rel="noopener"
+                    >mhbxyz</a
+                >
+                ·
+                <a
+                    href="https://github.com/mhkb-agency"
+                    target="_blank"
+                    rel="noopener"
+                    >mhkb agency</a
+                >
+            </p>
+        </div>
+        <script>
+            function copyInstall(btn) {
+                var text = document.getElementById("install-cmd").textContent;
+                navigator.clipboard.writeText(text).then(function () {
+                    btn.textContent = "\u2705";
+                    setTimeout(function () {
+                        btn.textContent = "\uD83D\uDCCB";
+                    }, 1500);
+                });
+            }
+            (function () {
+                var canvas = document.getElementById("stars");
+                var ctx = canvas.getContext("2d");
+                var items = [];
+                var maxStars = 20;
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener("resize", resize);
-  resize();
+                function resize() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                window.addEventListener("resize", resize);
+                resize();
 
-  function spawn() {
-    var x = Math.random() * canvas.width;
-    var y = Math.random() * canvas.height;
-    var life = 120 + Math.random() * 180;
-    var hues = [40, 20, 0, 340, 220, 240, 120];
-    var hue = hues[Math.floor(Math.random() * hues.length)];
-    var chars = "0123456789ABCDEF";
-    var digit = chars[Math.floor(Math.random() * chars.length)];
-    var size = 10 + Math.random() * 30;
-    items.push({ x: x, y: y, life: life, maxLife: life, hue: hue, digit: digit, size: size });
-  }
+                function spawn() {
+                    var x = Math.random() * canvas.width;
+                    var y = Math.random() * canvas.height;
+                    var life = 120 + Math.random() * 180;
+                    var hues = [40, 20, 0, 340, 220, 240, 120];
+                    var hue = hues[Math.floor(Math.random() * hues.length)];
+                    var chars = "0123456789ABCDEF";
+                    var digit = chars[Math.floor(Math.random() * chars.length)];
+                    var size = 10 + Math.random() * 30;
+                    items.push({
+                        x: x,
+                        y: y,
+                        life: life,
+                        maxLife: life,
+                        hue: hue,
+                        digit: digit,
+                        size: size,
+                    });
+                }
 
-  function tick() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (items.length < maxStars && Math.random() < 0.15) spawn();
-    for (var i = items.length - 1; i >= 0; i--) {
-      var s = items[i];
-      s.life--;
-      var t = s.life / s.maxLife;
-      var baseOpacity = t < 0.5 ? t * 2 : (1 - t) * 2;
-      var scale = t > 0.5 ? 0.5 + (1 - t) : 1;
-      ctx.save();
-      ctx.translate(s.x, s.y);
-      ctx.scale(scale, scale);
-      ctx.font = s.size + "px monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillStyle = "hsla(" + s.hue + ",70%,80%," + baseOpacity + ")";
-      ctx.fillText(s.digit, 0, 0);
-      ctx.restore();
-      if (s.life <= 0) items.splice(i, 1);
-    }
-    requestAnimationFrame(tick);
-  }
-  tick();
-})();
-</script>
-</body>
+                function tick() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    if (items.length < maxStars && Math.random() < 0.15)
+                        spawn();
+                    for (var i = items.length - 1; i >= 0; i--) {
+                        var s = items[i];
+                        s.life--;
+                        var t = s.life / s.maxLife;
+                        var baseOpacity = t < 0.5 ? t * 2 : (1 - t) * 2;
+                        var scale = t > 0.5 ? 0.5 + (1 - t) : 1;
+                        ctx.save();
+                        ctx.translate(s.x, s.y);
+                        ctx.scale(scale, scale);
+                        ctx.font = s.size + "px monospace";
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        ctx.fillStyle =
+                            "hsla(" + s.hue + ",70%,80%," + baseOpacity + ")";
+                        ctx.fillText(s.digit, 0, 0);
+                        ctx.restore();
+                        if (s.life <= 0) items.splice(i, 1);
+                    }
+                    requestAnimationFrame(tick);
+                }
+                tick();
+            })();
+        </script>
+    </body>
 </html>
