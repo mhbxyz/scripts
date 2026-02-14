@@ -391,18 +391,24 @@ show_menu() {
       _local_ver=$(read_meta_version "$_name")
       _remote_ver=$(get_remote_version "$_name")
       if [ -n "$_remote_ver" ] && [ -n "$_local_ver" ] && [ "$_local_ver" != "$_remote_ver" ]; then
-        printf "  %d) %-23s ${YELLOW}[to update]${RESET} %s\n" "$_i" "$_name" "$_desc" >/dev/tty
+        printf " %2d) %-15s ${YELLOW}[to update] ${RESET} %s\n" "$_i" "$_name" "$_desc" >/dev/tty
       else
-        printf "  %d) %-23s ${GREEN}[up to date]${RESET} %s\n" "$_i" "$_name" "$_desc" >/dev/tty
+        printf " %2d) %-15s ${GREEN}[up to date]${RESET} %s\n" "$_i" "$_name" "$_desc" >/dev/tty
       fi
     else
-      printf "  %d) %-23s [available] %s\n" "$_i" "$_name" "$_desc" >/dev/tty
+      printf " %2d) %-15s ${BLUE}[available] ${RESET} %s\n" "$_i" "$_name" "$_desc" >/dev/tty
     fi
     _i=$((_i + 1))
   done
+  printf "\n" >/dev/tty
   printf "  a) All scripts\n" >/dev/tty
-  printf "\nSelect scripts to install (e.g. 1 3 5 or a): " >/dev/tty
+  printf "  q) Quit\n" >/dev/tty
+  printf "\nSelect scripts to install (e.g. 1 3 5 or a or q): " >/dev/tty
   read -r _choice </dev/tty
+
+  if [ "$_choice" = "q" ] || [ "$_choice" = "Q" ]; then
+    return 1
+  fi
 
   if [ "$_choice" = "a" ] || [ "$_choice" = "A" ]; then
     get_all_names
@@ -496,7 +502,7 @@ cmd_install() {
       _scripts="$_only_scripts"
       ;;
     *)
-      _scripts=$(show_menu)
+      _scripts=$(show_menu) || exit 0
       [ -n "$_scripts" ] || die "No scripts selected"
       ;;
   esac
