@@ -11,7 +11,7 @@ load '/usr/lib/bats/bats-file/load'
 
 # ── Constants ──
 
-SCRIPTS_DIR="$(cd "$BATS_TEST_DIRNAME/../shell" && pwd)"
+SCRIPTS_DIR="$(cd "$BATS_TEST_DIRNAME/../src/shell" && pwd)"
 
 # ── GPG isolation ──
 
@@ -115,10 +115,10 @@ teardown_backup_env() {
 
 setup_install_env() {
   FAKE_REPO="$(mktemp -d)"
-  mkdir -p "$FAKE_REPO/shell"
+  mkdir -p "$FAKE_REPO/src/shell"
   # Create dummy shell scripts in the fake repo (with VERSION)
   for script in gpgkeys.sh sshkeys.sh homebackup.sh sortdownloads.sh mygit.sh dotfiles.sh mkproject.sh cleanup.sh; do
-    printf '#!/bin/sh\nVERSION="1.0.0"\necho "%s"\n' "$script" > "$FAKE_REPO/shell/$script"
+    printf '#!/bin/sh\nVERSION="1.0.0"\necho "%s"\n' "$script" > "$FAKE_REPO/src/shell/$script"
   done
   # Create dummy binaries in the fake repo (release structure) with .sha256 sidecars
   for tag in imgstotxt-latest pdftoimgs-latest keepalive-latest; do

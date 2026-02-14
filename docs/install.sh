@@ -259,7 +259,7 @@ install_script() {
 
   case "$_type" in
     shell)
-      _url="$SCRIPTS_BASE_URL/shell/$_filename"
+      _url="$SCRIPTS_BASE_URL/src/shell/$_filename"
       ;;
     binary)
       _release_tag=$(get_release_tag_for "$_name")
@@ -299,7 +299,7 @@ update_script() {
     shell)
       _tmpfile=$(mktemp)
       register_tmp "$_tmpfile"
-      _url="$SCRIPTS_BASE_URL/shell/$_filename"
+      _url="$SCRIPTS_BASE_URL/src/shell/$_filename"
       if ! download_file "$_url" "$_tmpfile"; then
         die "Failed to download '$_name' from $_url"
       fi

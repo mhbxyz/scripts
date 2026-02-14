@@ -38,4 +38,4 @@ jobs:
         run: uv sync --group dev
 
       - name: Lint Python
-        run: uv run ruff check python/
+        run: uv run ruff check src/python/

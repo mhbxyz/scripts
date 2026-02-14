@@ -312,7 +312,7 @@ teardown() {
 @test "update detects changed script" {
   "$INSTALL_SH" install --only "gpgkeys"
   # Change the script in the fake repo
-  printf '#!/bin/sh\nVERSION="1.1.0"\necho "updated gpgkeys"\n' > "$FAKE_REPO/shell/gpgkeys.sh"
+  printf '#!/bin/sh\nVERSION="1.1.0"\necho "updated gpgkeys"\n' > "$FAKE_REPO/src/shell/gpgkeys.sh"
   run "$INSTALL_SH" update
   assert_success
   assert_output --partial "Updated: gpgkeys"
@@ -321,7 +321,7 @@ teardown() {
 @test "update shows version transition" {
   "$INSTALL_SH" install --only "gpgkeys"
   # Change version in the fake repo
-  printf '#!/bin/sh\nVERSION="1.1.0"\necho "gpgkeys.sh"\n' > "$FAKE_REPO/shell/gpgkeys.sh"
+  printf '#!/bin/sh\nVERSION="1.1.0"\necho "gpgkeys.sh"\n' > "$FAKE_REPO/src/shell/gpgkeys.sh"
   run "$INSTALL_SH" update
   assert_success
   assert_output --partial "1.0.0 → 1.1.0"

@@ -13,19 +13,19 @@ test:
 
 # Linter Python
 lint:
-    uv run ruff check python/
+    uv run ruff check src/python/
 
 # Formatter Python
 fmt:
-    uv run ruff format python/
+    uv run ruff format src/python/
 
 # Build un binaire localement
 build script:
     #!/usr/bin/env bash
     case "{{script}}" in
-        imgstotxt)  src="python/imgs_to_txt.py" ;;
-        pdftoimgs)  src="python/pdf_to_imgs.py" ;;
-        keepalive)  src="python/keep_alive.py" ;;
+        imgstotxt)  src="src/python/imgs_to_txt.py" ;;
+        pdftoimgs)  src="src/python/pdf_to_imgs.py" ;;
+        keepalive)  src="src/python/keep_alive.py" ;;
         *)          echo "Unknown script: {{script}}"; exit 1 ;;
     esac
     uv run --group build pyinstaller --onefile --name "{{script}}" "$src"
@@ -38,13 +38,13 @@ versions:
     #!/usr/bin/env bash
     set -euo pipefail
     declare -A src=(
-        [imgstotxt]="python/imgs_to_txt.py"
-        [pdftoimgs]="python/pdf_to_imgs.py"
-        [keepalive]="python/keep_alive.py"
+        [imgstotxt]="src/python/imgs_to_txt.py"
+        [pdftoimgs]="src/python/pdf_to_imgs.py"
+        [keepalive]="src/python/keep_alive.py"
     )
     out="docs/versions"
     : > "$out"
-    for f in shell/*.sh; do
+    for f in src/shell/*.sh; do
         name=$(basename "$f" .sh)
         ver=$(grep '^VERSION=' "$f" | cut -d'"' -f2)
         printf '%s|%s\n' "$name" "$ver" >> "$out"

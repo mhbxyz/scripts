@@ -18,9 +18,9 @@ jobs:
           NAME="${TAG%%-v*}"
           VERSION="${TAG#*-}"
           case "$NAME" in
-            imgstotxt)  SOURCE="python/imgs_to_txt.py" ;;
-            pdftoimgs)  SOURCE="python/pdf_to_imgs.py" ;;
-            keepalive)  SOURCE="python/keep_alive.py" ;;
+            imgstotxt)  SOURCE="src/python/imgs_to_txt.py" ;;
+            pdftoimgs)  SOURCE="src/python/pdf_to_imgs.py" ;;
+            keepalive)  SOURCE="src/python/keep_alive.py" ;;
             *)          echo "Unknown script: $NAME"; exit 1 ;;
           esac
           echo "name=$NAME"    >> "$GITHUB_OUTPUT"

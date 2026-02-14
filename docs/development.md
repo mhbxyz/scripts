@@ -68,8 +68,9 @@ The CI workflow will:
 
 ```
 .
-├── shell/                  # Shell scripts
-├── python/                 # Python scripts
+├── src/
+│   ├── shell/              # Shell scripts
+│   └── python/             # Python scripts
 ├── tests/                  # BATS test suites
 │   ├── mocks/              # Mock binaries for tests
 │   ├── test_helper.bash    # Shared test helpers
@@ -88,14 +89,14 @@ The CI workflow will:
 
 ### Shell script
 
-1. Add the script to `shell/`
+1. Add the script to `src/shell/`
 2. Add an entry to `MANIFEST` in `install.sh` with type `shell`
 3. Add tests in `tests/`
 4. Update `setup_install_env()` in `tests/test_helper.bash`
 
 ### Python binary
 
-1. Add the script to `python/`
+1. Add the script to `src/python/`
 2. Add dependencies to `pyproject.toml`
 3. Add a `case` entry in the `justfile` `build` recipe
 4. Add an entry to `MANIFEST` in `install.sh` with type `binary` and a release tag
