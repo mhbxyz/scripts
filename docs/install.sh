@@ -373,12 +373,21 @@ show_menu() {
     _name=$(manifest_name "$_entry")
     _desc=$(manifest_desc "$_entry")
     _ver=$(read_meta_version "$_name")
-    if [ -n "$_ver" ]; then
-      _label="$_name ($_ver)"
+    if [ -f "$INSTALL_DIR/$_name" ]; then
+      if [ -n "$_ver" ]; then
+        _label="$_name ($_ver) [installed]"
+      else
+        _label="$_name [installed]"
+      fi
+      printf "  ${GREEN}%d) %-35s %s${RESET}\n" "$_i" "$_label" "$_desc" >/dev/tty
     else
-      _label="$_name"
+      if [ -n "$_ver" ]; then
+        _label="$_name ($_ver)"
+      else
+        _label="$_name"
+      fi
+      printf "  %d) %-35s %s\n" "$_i" "$_label" "$_desc" >/dev/tty
     fi
-    printf "  %d) %-35s %s\n" "$_i" "$_label" "$_desc" >/dev/tty
     _i=$((_i + 1))
   done
   printf "  a) All scripts\n" >/dev/tty
