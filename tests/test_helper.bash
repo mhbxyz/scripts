@@ -130,6 +130,21 @@ setup_install_env() {
       sha256sum "$_binpath" | cut -d' ' -f1 > "$_binpath.sha256"
     done
   done
+  # Create centralized versions file
+  mkdir -p "$FAKE_REPO/docs"
+  printf '%s\n' \
+    "cleanup|1.0.0" \
+    "dotfiles|1.0.0" \
+    "gpgkeys|1.0.0" \
+    "homebackup|1.0.0" \
+    "imgstotxt|1.0.0" \
+    "keepalive|1.0.0" \
+    "mkproject|1.0.0" \
+    "mygit|1.0.0" \
+    "pdftoimgs|1.0.0" \
+    "sortdownloads|1.0.0" \
+    "sshkeys|1.0.0" \
+    > "$FAKE_REPO/docs/versions"
   export SCRIPTS_REPO_URL="file://$FAKE_REPO"
   export RELEASES_BASE_URL="file://$FAKE_REPO"
   export INSTALL_DIR="$(mktemp -d)"

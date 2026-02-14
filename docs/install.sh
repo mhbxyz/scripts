@@ -363,7 +363,22 @@ check_path() {
   esac
 }
 
+fetch_remote_versions() {
+  _rvtmp=$(mktemp)
+  if download_file "$SCRIPTS_BASE_URL/docs/versions" "$_rvtmp" 2>/dev/null; then
+    cat "$_rvtmp"
+    rm -f "$_rvtmp"
+  else
+    rm -f "$_rvtmp"
+  fi
+}
+
+get_remote_version() {
+  printf '%s\n' "$REMOTE_VERSIONS" | grep "^$1|" | cut -d'|' -f2
+}
+
 show_menu() {
+  REMOTE_VERSIONS=$(fetch_remote_versions)
   info "Available scripts:" >/dev/tty
   printf "\n" >/dev/tty
   _i=1
@@ -372,21 +387,16 @@ show_menu() {
     _entry=$(manifest_entry "$_i")
     _name=$(manifest_name "$_entry")
     _desc=$(manifest_desc "$_entry")
-    _ver=$(read_meta_version "$_name")
     if [ -f "$INSTALL_DIR/$_name" ]; then
-      if [ -n "$_ver" ]; then
-        _label="$_name ($_ver) [installed]"
+      _local_ver=$(read_meta_version "$_name")
+      _remote_ver=$(get_remote_version "$_name")
+      if [ -n "$_remote_ver" ] && [ -n "$_local_ver" ] && [ "$_local_ver" != "$_remote_ver" ]; then
+        printf "  %d) %-23s ${YELLOW}[to update]${RESET} %s\n" "$_i" "$_name" "$_desc" >/dev/tty
       else
-        _label="$_name [installed]"
+        printf "  %d) %-23s ${GREEN}[up to date]${RESET} %s\n" "$_i" "$_name" "$_desc" >/dev/tty
       fi
-      printf "  ${GREEN}%d) %-35s %s${RESET}\n" "$_i" "$_label" "$_desc" >/dev/tty
     else
-      if [ -n "$_ver" ]; then
-        _label="$_name ($_ver)"
-      else
-        _label="$_name"
-      fi
-      printf "  %d) %-35s %s\n" "$_i" "$_label" "$_desc" >/dev/tty
+      printf "  %d) %-23s [available] %s\n" "$_i" "$_name" "$_desc" >/dev/tty
     fi
     _i=$((_i + 1))
   done
