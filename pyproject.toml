@@ -8,6 +8,7 @@ dependencies = [
     "pillow",
     "pytesseract",
     "pymupdf",
+    "playwright>=1.58.0",
 ]
 
 [dependency-groups]
