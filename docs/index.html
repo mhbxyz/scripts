@@ -183,57 +183,58 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
             (function () {
                 var canvas = document.getElementById("stars");
                 var ctx = canvas.getContext("2d");
-                var items = [];
-                var maxStars = 20;
+                var chars = "0123456789ABCDEF";
+                var hues = [40, 20, 0, 340, 220, 240, 120];
+                var FONT_SIZE = 16;
+                var CELL_W = 12;
+                var CELL_H = 18;
+                var ACTIVATION_RATE = 0.003;
+                var grid, cols, rows, totalCells;
+
+                function buildGrid() {
+                    cols = Math.ceil(canvas.width / CELL_W);
+                    rows = Math.ceil(canvas.height / CELL_H);
+                    totalCells = rows * cols;
+                    grid = new Array(totalCells);
+                    for (var i = 0; i < totalCells; i++) {
+                        grid[i] = { char: "0", hue: 0, life: 0, maxLife: 0 };
+                    }
+                }
 
                 function resize() {
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
+                    buildGrid();
                 }
                 window.addEventListener("resize", resize);
                 resize();
 
-                function spawn() {
-                    var x = Math.random() * canvas.width;
-                    var y = Math.random() * canvas.height;
-                    var life = 120 + Math.random() * 180;
-                    var hues = [40, 20, 0, 340, 220, 240, 120];
-                    var hue = hues[Math.floor(Math.random() * hues.length)];
-                    var chars = "0123456789ABCDEF";
-                    var digit = chars[Math.floor(Math.random() * chars.length)];
-                    var size = 10 + Math.random() * 30;
-                    items.push({
-                        x: x,
-                        y: y,
-                        life: life,
-                        maxLife: life,
-                        hue: hue,
-                        digit: digit,
-                        size: size,
-                    });
-                }
-
                 function tick() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    if (items.length < maxStars && Math.random() < 0.15)
-                        spawn();
-                    for (var i = items.length - 1; i >= 0; i--) {
-                        var s = items[i];
-                        s.life--;
-                        var t = s.life / s.maxLife;
-                        var baseOpacity = t < 0.5 ? t * 2 : (1 - t) * 2;
-                        var scale = t > 0.5 ? 0.5 + (1 - t) : 1;
-                        ctx.save();
-                        ctx.translate(s.x, s.y);
-                        ctx.scale(scale, scale);
-                        ctx.font = s.size + "px monospace";
-                        ctx.textAlign = "center";
-                        ctx.textBaseline = "middle";
-                        ctx.fillStyle =
-                            "hsla(" + s.hue + ",70%,80%," + baseOpacity + ")";
-                        ctx.fillText(s.digit, 0, 0);
-                        ctx.restore();
-                        if (s.life <= 0) items.splice(i, 1);
+                    ctx.fillStyle = "rgba(0,0,0,0.15)";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    var count = Math.max(1, Math.round(totalCells * ACTIVATION_RATE));
+                    for (var a = 0; a < count; a++) {
+                        var idx = Math.floor(Math.random() * totalCells);
+                        var cell = grid[idx];
+                        cell.char = chars[Math.floor(Math.random() * chars.length)];
+                        cell.hue = hues[Math.floor(Math.random() * hues.length)];
+                        var life = 120 + Math.random() * 180;
+                        cell.life = life;
+                        cell.maxLife = life;
+                    }
+                    ctx.font = FONT_SIZE + "px monospace";
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "top";
+                    for (var i = 0; i < totalCells; i++) {
+                        var cell = grid[i];
+                        if (cell.life <= 0) continue;
+                        cell.life--;
+                        var t = cell.life / cell.maxLife;
+                        var opacity = t * t;
+                        var col = i % cols;
+                        var row = (i - col) / cols;
+                        ctx.fillStyle = "hsla(" + cell.hue + ",70%,80%," + opacity + ")";
+                        ctx.fillText(cell.char, col * CELL_W, row * CELL_H);
                     }
                     requestAnimationFrame(tick);
                 }
