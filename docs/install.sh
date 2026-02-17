@@ -12,6 +12,8 @@ GREEN="\033[0;32m"
 RED="\033[0;31m"
 YELLOW="\033[0;33m"
 BLUE="\033[0;34m"
+MAGENTA="\033[0;35m"
+CYAN="\033[0;36m"
 
 SCRIPTS_BASE_URL="${SCRIPTS_REPO_URL:-https://raw.githubusercontent.com/mhbxyz/scripts/main}"
 RELEASES_BASE_URL="${RELEASES_BASE_URL:-https://github.com/mhbxyz/scripts/releases/download}"
@@ -390,6 +392,26 @@ get_remote_version() {
   printf '%s\n' "$REMOTE_VERSIONS" | grep "^$1|" | cut -d'|' -f2
 }
 
+random_phrase() {
+  _phrases="YELLOW|There is no secret. Move along.
+CYAN|Mitochondria is the powerhouse of the cell.
+GREEN|A monad is just a monoid in the category of endofunctors.
+MAGENTA|There are only two hard things: cache invalidation, naming things, and off-by-one errors.
+BLUE|It works on my machine.
+RED|Have you tried turning it off and on again?
+YELLOW|The cake is a lie.
+CYAN|127.0.0.1 is where the heart is.
+GREEN|To mass-assign or not to mass-assign, that is the CVE.
+MAGENTA|In case of fire: git commit, git push, leave building."
+  _count=10
+  _pick=$(( $(od -An -tu4 -N4 /dev/urandom) % _count + 1 ))
+  _line=$(printf '%s\n' "$_phrases" | sed -n "${_pick}p")
+  _color_name="${_line%%|*}"
+  _text="${_line#*|}"
+  eval "_color=\$$_color_name"
+  printf "  ${_color}%s${RESET}" "$_text"
+}
+
 show_menu() {
   REMOTE_VERSIONS=$(fetch_remote_versions)
   info "Available scripts:" >/dev/tty
@@ -416,7 +438,7 @@ show_menu() {
   printf "\n" >/dev/tty
   printf "  a) All scripts\n" >/dev/tty
   printf "  q) Quit\n" >/dev/tty
-  printf "\n  ${YELLOW}There is no secret. Move along.${RESET}\n" >/dev/tty
+  printf "\n$(random_phrase)\n" >/dev/tty
   printf "\nSelect scripts to install (e.g. 1 3 5 or a or q): " >/dev/tty
   read -r _choice </dev/tty
 
