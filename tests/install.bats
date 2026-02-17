@@ -69,10 +69,10 @@ teardown() {
 
 # ── Install e2e ──
 
-@test "install --all installs all 11 scripts" {
+@test "install --all installs all 10 scripts" {
   run "$INSTALL_SH" install --all
   assert_success
-  assert_output --partial "Installed 11 script(s)"
+  assert_output --partial "Installed 10 script(s)"
   for name in gpgkeys sshkeys homebackup sortdownloads mygit dotfiles mkproject cleanup imgstotxt pdftoimgs; do
     assert [ -f "$INSTALL_DIR/$name" ]
   done
@@ -152,7 +152,7 @@ teardown() {
   "$INSTALL_SH" install --all
   run "$INSTALL_SH" uninstall --all
   assert_success
-  assert_output --partial "Removed 11 script(s)"
+  assert_output --partial "Removed 10 script(s)"
   for name in gpgkeys sshkeys homebackup sortdownloads mygit dotfiles mkproject cleanup imgstotxt pdftoimgs; do
     assert [ ! -f "$INSTALL_DIR/$name" ]
   done
@@ -240,7 +240,7 @@ teardown() {
 @test "no subcommand defaults to install" {
   run "$INSTALL_SH" --all
   assert_success
-  assert_output --partial "Installed 11 script(s)"
+  assert_output --partial "Installed 10 script(s)"
 }
 
 @test "--only without subcommand defaults to install" {
@@ -316,6 +316,27 @@ teardown() {
   run "$INSTALL_SH" update
   assert_success
   assert_output --partial "Updated: gpgkeys"
+}
+
+@test "install --only hidden script keepalive works" {
+  run "$INSTALL_SH" install --only "keepalive"
+  assert_success
+  assert_output --partial "Installed: keepalive (1.0.0)"
+  assert [ -f "$INSTALL_DIR/keepalive" ]
+  assert [ -x "$INSTALL_DIR/keepalive" ]
+}
+
+@test "install --all does not install hidden script keepalive" {
+  run "$INSTALL_SH" install --all
+  assert_success
+  assert [ ! -f "$INSTALL_DIR/keepalive" ]
+}
+
+@test "update detects hidden script keepalive when installed" {
+  "$INSTALL_SH" install --only "keepalive"
+  run "$INSTALL_SH" update
+  assert_success
+  assert_output --partial "keepalive: up to date"
 }
 
 @test "update shows version transition" {

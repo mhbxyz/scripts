@@ -26,8 +26,9 @@ dotfiles|dotfiles.sh|Manage dotfiles with symlinks|shell
 mkproject|mkproject.sh|Scaffold new projects from templates|shell
 cleanup|cleanup.sh|Free disk space by cleaning caches and temp files|shell
 imgstotxt|imgstotxt|OCR images to text file|binary|imgstotxt-latest
-pdftoimgs|pdftoimgs|Convert PDF to images|binary|pdftoimgs-latest
-keepalive|keepalive|Simulate activity to prevent idle status|binary|keepalive-latest"
+pdftoimgs|pdftoimgs|Convert PDF to images|binary|pdftoimgs-latest"
+
+HIDDEN_MANIFEST="keepalive|keepalive|Simulate activity to prevent idle status|binary|keepalive-latest"
 
 # ── Temp file cleanup ──
 
@@ -85,6 +86,18 @@ manifest_entry() {
   printf '%s\n' "$MANIFEST" | awk "NR==$1"
 }
 
+full_manifest() {
+  printf '%s\n%s\n' "$MANIFEST" "$HIDDEN_MANIFEST"
+}
+
+full_manifest_count() {
+  printf '%s\n' "$(full_manifest)" | wc -l
+}
+
+full_manifest_entry() {
+  printf '%s\n' "$(full_manifest)" | awk "NR==$1"
+}
+
 manifest_name() {
   printf '%s' "$1" | cut -d'|' -f1
 }
@@ -109,9 +122,9 @@ manifest_release_tag() {
 get_type_for() {
   _gname="$1"
   _i=1
-  _total=$(manifest_count)
+  _total=$(full_manifest_count)
   while [ "$_i" -le "$_total" ]; do
-    _entry=$(manifest_entry "$_i")
+    _entry=$(full_manifest_entry "$_i")
     if [ "$(manifest_name "$_entry")" = "$_gname" ]; then
       manifest_type "$_entry"
       return
@@ -123,9 +136,9 @@ get_type_for() {
 get_release_tag_for() {
   _gname="$1"
   _i=1
-  _total=$(manifest_count)
+  _total=$(full_manifest_count)
   while [ "$_i" -le "$_total" ]; do
-    _entry=$(manifest_entry "$_i")
+    _entry=$(full_manifest_entry "$_i")
     if [ "$(manifest_name "$_entry")" = "$_gname" ]; then
       manifest_release_tag "$_entry"
       return
@@ -197,9 +210,9 @@ validate_script_name() {
   _vname="$1"
   _found=0
   _i=1
-  _total=$(manifest_count)
+  _total=$(full_manifest_count)
   while [ "$_i" -le "$_total" ]; do
-    _entry=$(manifest_entry "$_i")
+    _entry=$(full_manifest_entry "$_i")
     if [ "$(manifest_name "$_entry")" = "$_vname" ]; then
       _found=1
       break
@@ -214,9 +227,9 @@ validate_script_name() {
 get_filename_for() {
   _gname="$1"
   _i=1
-  _total=$(manifest_count)
+  _total=$(full_manifest_count)
   while [ "$_i" -le "$_total" ]; do
-    _entry=$(manifest_entry "$_i")
+    _entry=$(full_manifest_entry "$_i")
     if [ "$(manifest_name "$_entry")" = "$_gname" ]; then
       manifest_filename "$_entry"
       return
@@ -228,9 +241,9 @@ get_filename_for() {
 get_installed_scripts() {
   _installed=""
   _i=1
-  _total=$(manifest_count)
+  _total=$(full_manifest_count)
   while [ "$_i" -le "$_total" ]; do
-    _entry=$(manifest_entry "$_i")
+    _entry=$(full_manifest_entry "$_i")
     _name=$(manifest_name "$_entry")
     if [ -f "$INSTALL_DIR/$_name" ]; then
       _installed="$_installed $_name"
@@ -403,11 +416,18 @@ show_menu() {
   printf "\n" >/dev/tty
   printf "  a) All scripts\n" >/dev/tty
   printf "  q) Quit\n" >/dev/tty
+  printf "\n  ${YELLOW}There is no secret. Move along.${RESET}\n" >/dev/tty
   printf "\nSelect scripts to install (e.g. 1 3 5 or a or q): " >/dev/tty
   read -r _choice </dev/tty
 
   if [ "$_choice" = "q" ] || [ "$_choice" = "Q" ]; then
     return 1
+  fi
+
+  if [ "$_choice" = "1337" ]; then
+    printf "\n  ${GREEN}> You're elite enough.${RESET}\n" >/dev/tty
+    printf "keepalive"
+    return
   fi
 
   if [ "$_choice" = "a" ] || [ "$_choice" = "A" ]; then
@@ -458,7 +478,6 @@ Available scripts:
   cleanup                        Free disk space by cleaning caches and temp files
   imgstotxt                      OCR images to text file
   pdftoimgs                      Convert PDF to images
-  keepalive                      Simulate activity to prevent idle status
 
 Examples:
   curl -fsSL https://mhbxyz.github.io/scripts/install.sh | sh
