@@ -22,13 +22,27 @@ fmt:
 # Build un binaire localement
 build script:
     #!/usr/bin/env bash
+    common="--onefile --strip"
+    exclude_base="tkinter,_tkinter,PIL.ImageTk,unittest,test,pydoc,doctest,email,html,http,xmlrpc,xml.etree,multiprocessing,concurrent,asyncio,logging,csv,sqlite3,decimal,fractions,pdb,profile,cProfile,trace,ensurepip,venv,pip,setuptools,lib2to3,idlelib,distutils,turtledemo,turtle"
     case "{{script}}" in
-        imgstotxt)  src="src/python/imgs_to_txt.py" ;;
-        pdftoimgs)  src="src/python/pdf_to_imgs.py" ;;
-        keepalive)  src="src/python/keep_alive.py" ;;
-        *)          echo "Unknown script: {{script}}"; exit 1 ;;
+        keepalive)
+            src="src/python/keep_alive.py"
+            excludes="$exclude_base,PIL,pytesseract,fitz,pymupdf" ;;
+        imgstotxt)
+            src="src/python/imgs_to_txt.py"
+            excludes="$exclude_base,fitz,pymupdf" ;;
+        pdftoimgs)
+            src="src/python/pdf_to_imgs.py"
+            excludes="$exclude_base,PIL.ImageTk,pytesseract" ;;
+        *)
+            echo "Unknown script: {{script}}"; exit 1 ;;
     esac
-    uv run --group build pyinstaller --onefile --name "{{script}}" "$src"
+    exclude_flags=""
+    IFS=',' read -ra mods <<< "$excludes"
+    for mod in "${mods[@]}"; do
+        exclude_flags+=" --exclude-module $mod"
+    done
+    uv run --group build pyinstaller $common --name "{{script}}" $exclude_flags "$src"
 
 # Build tous les binaires
 build-all: (build "imgstotxt") (build "pdftoimgs") (build "keepalive")

@@ -46,7 +46,16 @@ jobs:
         run: uv sync --group build
 
       - name: Build binary
-        run: uv run pyinstaller --onefile --name "${{ needs.prepare.outputs.name }}" "${{ needs.prepare.outputs.source }}"
+        run: |
+          EXCLUDE_BASE="tkinter,_tkinter,PIL.ImageTk,unittest,test,pydoc,doctest,email,html,http,xmlrpc,xml.etree,multiprocessing,concurrent,asyncio,logging,csv,sqlite3,decimal,fractions,pdb,profile,cProfile,trace,ensurepip,venv,pip,setuptools,lib2to3,idlelib,distutils,turtledemo,turtle"
+          NAME="${{ needs.prepare.outputs.name }}"
+          case "$NAME" in
+            keepalive)  EXCLUDES="$EXCLUDE_BASE,PIL,pytesseract,fitz,pymupdf" ;;
+            imgstotxt)  EXCLUDES="$EXCLUDE_BASE,fitz,pymupdf" ;;
+            pdftoimgs)  EXCLUDES="$EXCLUDE_BASE,PIL.ImageTk,pytesseract" ;;
+          esac
+          EXCLUDE_FLAGS=$(echo "$EXCLUDES" | tr ',' '\n' | sed 's/^/--exclude-module /' | tr '\n' ' ')
+          uv run pyinstaller --onefile --strip --name "$NAME" $EXCLUDE_FLAGS "${{ needs.prepare.outputs.source }}"
 
       - name: Rename artifact
         run: mv "dist/${{ needs.prepare.outputs.name }}" "dist/${{ needs.prepare.outputs.name }}-${{ matrix.os }}-${{ matrix.arch }}"
