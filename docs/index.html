@@ -142,7 +142,7 @@
                     onclick="copyInstall(this)"
                     title="Copy"
                 >
-                    &#x1F4CB;
+                    Copy
                 </button>
             </div>
             <pre><code>sh -s -- --all                    # Install all scripts
@@ -174,9 +174,9 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
             function copyInstall(btn) {
                 var text = document.getElementById("install-cmd").textContent;
                 navigator.clipboard.writeText(text).then(function () {
-                    btn.textContent = "\u2705";
+                    btn.textContent = "Copied!";
                     setTimeout(function () {
-                        btn.textContent = "\uD83D\uDCCB";
+                        btn.textContent = "Copy";
                     }, 1500);
                 });
             }
