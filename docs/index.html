@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>scripts:/$</title>
+        <title>Scripts by mhbxyz</title>
         <style>
             * {
                 margin: 0;
@@ -212,12 +212,17 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
                 function tick() {
                     ctx.fillStyle = "rgba(0,0,0,0.15)";
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    var count = Math.max(1, Math.round(totalCells * ACTIVATION_RATE));
+                    var count = Math.max(
+                        1,
+                        Math.round(totalCells * ACTIVATION_RATE),
+                    );
                     for (var a = 0; a < count; a++) {
                         var idx = Math.floor(Math.random() * totalCells);
                         var cell = grid[idx];
-                        cell.char = chars[Math.floor(Math.random() * chars.length)];
-                        cell.hue = hues[Math.floor(Math.random() * hues.length)];
+                        cell.char =
+                            chars[Math.floor(Math.random() * chars.length)];
+                        cell.hue =
+                            hues[Math.floor(Math.random() * hues.length)];
                         var life = 120 + Math.random() * 180;
                         cell.life = life;
                         cell.maxLife = life;
@@ -233,7 +238,8 @@ sh -s -- uninstall                # Uninstall all scripts</code></pre>
                         var opacity = t * t;
                         var col = i % cols;
                         var row = (i - col) / cols;
-                        ctx.fillStyle = "hsla(" + cell.hue + ",70%,80%," + opacity + ")";
+                        ctx.fillStyle =
+                            "hsla(" + cell.hue + ",70%,80%," + opacity + ")";
                         ctx.fillText(cell.char, col * CELL_W, row * CELL_H);
                     }
                     requestAnimationFrame(tick);
